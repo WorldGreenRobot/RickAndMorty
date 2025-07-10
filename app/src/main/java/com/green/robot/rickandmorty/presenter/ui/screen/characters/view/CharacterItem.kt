@@ -1,0 +1,135 @@
+package com.green.robot.rickandmorty.presenter.ui.screen.characters.view
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil3.compose.SubcomposeAsyncImage
+import com.green.robot.rickandmorty.R
+import com.green.robot.rickandmorty.data.entity.Character
+import com.green.robot.rickandmorty.presenter.ui.theme.Grey10
+
+@Composable
+fun CharacterItem(
+    character: Character,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .clip(
+                RoundedCornerShape(
+                    24.dp
+                )
+            )
+
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            SubcomposeAsyncImage(
+                model = character.image,
+                contentDescription = character.name,
+                loading = {
+                    CircularProgressIndicator()
+                },
+                error = {
+                    Image(
+                        painter = painterResource(R.drawable.empty),
+                        contentDescription = "",
+                    )
+                },
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center)
+            )
+            Row(
+                modifier = Modifier
+                    .align(
+                        Alignment.BottomEnd
+                    )
+                    .clip(RoundedCornerShape(topStart = 24.dp))
+                    .background(Color.Black)
+                    .padding(start = 16.dp, top = 4.dp, end = 4.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "",
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    text = character.status,
+                    color = Color.White
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Grey10
+                )
+                .padding(top = 24.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = character.name,
+                color = Color.White,
+                fontSize = 18.sp
+            )
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = "${character.gender} | ${character.species} ",
+                color = Color.White,
+                fontSize = 12.sp
+            )
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun CharactersScreenPreview() {
+    MaterialTheme {
+        CharacterItem(
+            character = Character(
+                id = 1,
+                name = "Rick Sanchez",
+                status = "Alive",
+                species = "Human",
+                gender = "Male",
+                image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
+            )
+        )
+    }
+}

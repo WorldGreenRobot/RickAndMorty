@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -28,11 +30,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         compose = true
@@ -56,4 +55,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(project.dependencies.platform(libs.koin.bom))
+    implementation(project.dependencies.platform(libs.okhttp.bom))
+    implementation(libs.bundles.koin)
+    implementation(libs.bundles.orbit)
+    implementation(libs.bundles.room)
+    implementation(libs.retrofit)
+    implementation(libs.serialization)
+    implementation(libs.bundles.okhttp)
+    ksp(libs.room.compiler)
+    implementation(libs.serializarion.converter)
+    implementation(libs.bundles.coil)
 }
