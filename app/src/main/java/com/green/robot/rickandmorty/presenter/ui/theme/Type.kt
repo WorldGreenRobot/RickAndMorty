@@ -1,4 +1,4 @@
-package com.green.robot.rickandmorty.ui.theme
+package com.green.robot.rickandmorty.presenter.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
