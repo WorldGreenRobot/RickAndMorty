@@ -66,4 +66,5 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.serializarion.converter)
     implementation(libs.bundles.coil)
+    implementation(libs.navigation.compose)
 }

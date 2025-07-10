@@ -1,5 +1,6 @@
 package com.green.robot.rickandmorty.presenter.ui.screen.characters
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.green.robot.rickandmorty.data.entity.Character
+import com.green.robot.rickandmorty.presenter.navigation.CharacterDetail
+import com.green.robot.rickandmorty.presenter.navigation.Characters
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.view.CharacterItem
 import org.koin.compose.viewmodel.koinViewModel
@@ -24,19 +28,24 @@ import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CharactersScreen(
+    navigateController: NavController,
     viewModel: CharactersViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
 
     CharactersContent(
-        state = state
+        state = state,
+        onAction = {
+            handleAction(it, navigateController)
+        }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CharactersContent(
-    state: CharactersState
+    state: CharactersState,
+    onAction: (CharactersAction) -> Unit = {}
 ) {
     Screen(
         modifier = Modifier.fillMaxSize(),
@@ -58,10 +67,29 @@ private fun CharactersContent(
                 CharacterItem(
                     character = it,
                     modifier = Modifier
+                        .clickable {
+                            onAction(CharactersAction.OpenCharacterDetail(it.id))
+                        }
                 )
             }
         }
     }
+}
+
+private fun handleAction(action: CharactersAction, navController: NavController) {
+    when (action) {
+        is CharactersAction.OpenCharacterDetail -> {
+            navController.navigate(
+                CharacterDetail(
+                    id = action.id
+                )
+            )
+        }
+    }
+}
+
+sealed interface CharactersAction {
+    data class OpenCharacterDetail(val id: Int) : CharactersAction
 }
 
 @Composable

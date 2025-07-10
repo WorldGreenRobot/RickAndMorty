@@ -44,7 +44,6 @@ fun CharacterItem(
                     24.dp
                 )
             )
-
     ) {
         Box(
             modifier = Modifier

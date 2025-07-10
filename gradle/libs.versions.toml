@@ -18,6 +18,7 @@ okhttp = "5.1.0"
 serialization = "1.9.0"
 kotlinx-serialization-converter = "1.0.0"
 coil = "3.2.0"
+nav_version = "2.9.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,7 @@ serialization = {module="org.jetbrains.kotlinx:kotlinx-serialization-json", vers
 serializarion-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "kotlinx-serialization-converter" }
 coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav_version" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
