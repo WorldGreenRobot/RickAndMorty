@@ -6,9 +6,9 @@ import androidx.compose.runtime.Immutable
 data class CharacterDetail(
     val id: Int,
     val name: String,
-    val status: String,
+    val status: Status,
     val species: String,
-    val gender: String,
+    val gender: Gender,
     val origin: String,
     val image: String,
     val episodes: List<String> = emptyList()

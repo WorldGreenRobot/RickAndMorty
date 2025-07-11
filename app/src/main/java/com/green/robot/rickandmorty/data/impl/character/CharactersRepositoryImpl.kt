@@ -12,10 +12,13 @@ import kotlinx.coroutines.withContext
 class CharactersRepositoryImpl(
     private val charactersService: CharactersService
 ) : CharactersRepository {
-    override suspend fun getAllCharacters(): Result<List<Character>> {
+    override suspend fun getCharacters(
+        options: Map<String, String>
+    ): Result<List<Character>> {
         return withContext(Dispatchers.IO) {
             try {
-                val characters = charactersService.getAllCharacter().results.mapNetworkToDomain()
+                val characters =
+                    charactersService.getCharacters(options).results.mapNetworkToDomain()
                 Result.success(characters)
             } catch (e: Exception) {
                 Result.failure(e)

@@ -2,8 +2,10 @@ package com.green.robot.rickandmorty.domain.entity.usecase.character
 
 import com.green.robot.rickandmorty.domain.repository.character.CharactersRepository
 
-class GetAllCharacterUseCase(
+class GetCharactersUseCase(
     private val charactersRepository: CharactersRepository
 ) {
-    suspend operator fun invoke() = charactersRepository.getAllCharacters()
+    suspend operator fun invoke(
+        options: Map<String, String>
+    ) = charactersRepository.getCharacters(options)
 }

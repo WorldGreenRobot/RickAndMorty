@@ -27,6 +27,8 @@ import androidx.navigation.NavController
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetailData
+import com.green.robot.rickandmorty.domain.entity.character.Gender
+import com.green.robot.rickandmorty.domain.entity.character.Status
 import com.green.robot.rickandmorty.domain.entity.episode.Episode
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.CharacterDetailView
@@ -144,9 +146,9 @@ private fun CharacterDetailScreenPreview() {
                     characterDetail = CharacterDetail(
                         id = 1,
                         name = "Rick Sanchez",
-                        status = "Alive",
+                        status = Status.ALIVE,
                         species = "Human",
-                        gender = "Male",
+                        gender = Gender.MALE,
                         image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
                         origin = "Earth"
                     ),

@@ -4,4 +4,8 @@
     <string name="race">Race:</string>
     <string name="origin">Origin:</string>
     <string name="episodes">Episodes</string>
+    <string name="search_character">Search character</string>
+    <string name="characters">Characters</string>
+    <string name="repeat">Repeat</string>
+    <string name="characters_not_found">Characters Not Found</string>
 </resources>
