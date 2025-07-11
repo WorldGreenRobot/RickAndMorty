@@ -29,8 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
 import com.green.robot.rickandmorty.R
-import com.green.robot.rickandmorty.data.entity.Character
-import com.green.robot.rickandmorty.presenter.ui.theme.Grey10
+import com.green.robot.rickandmorty.domain.entity.character.Character
 
 @Composable
 fun CharacterItem(
@@ -44,7 +43,6 @@ fun CharacterItem(
                     24.dp
                 )
             )
-
     ) {
         Box(
             modifier = Modifier
@@ -73,7 +71,7 @@ fun CharacterItem(
                         Alignment.BottomEnd
                     )
                     .clip(RoundedCornerShape(topStart = 24.dp))
-                    .background(Color.Black)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(start = 16.dp, top = 4.dp, end = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -81,12 +79,12 @@ fun CharacterItem(
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = "",
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(18.dp)
                 )
                 Text(
                     text = character.status,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }
@@ -94,7 +92,7 @@ fun CharacterItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    Grey10
+                    color = MaterialTheme.colorScheme.primaryContainer
                 )
                 .padding(top = 24.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -103,14 +101,14 @@ fun CharacterItem(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 text = character.name,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 18.sp
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 text = "${character.gender} | ${character.species} ",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 12.sp
             )
         }

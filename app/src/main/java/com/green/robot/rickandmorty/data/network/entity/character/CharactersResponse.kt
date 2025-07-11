@@ -1,5 +1,6 @@
-package com.green.robot.rickandmorty.data.network.entity
+package com.green.robot.rickandmorty.data.network.entity.character
 
+import com.green.robot.rickandmorty.data.network.entity.core.Info
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
