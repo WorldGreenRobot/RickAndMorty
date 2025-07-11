@@ -2,6 +2,7 @@ package com.green.robot.rickandmorty
 
 import android.app.Application
 import com.green.robot.rickandmorty.di.appModule
+import com.green.robot.rickandmorty.di.domainModule
 import com.green.robot.rickandmorty.di.networkModule
 import com.green.robot.rickandmorty.di.repositoryModule
 import com.green.robot.rickandmorty.di.serviceModule
@@ -16,7 +17,14 @@ class RickAndMortyApp : Application() {
 
         startKoin {
             androidContext(this@RickAndMortyApp)
-            modules(appModule, networkModule, repositoryModule, serviceModule, uiModule)
+            modules(
+                appModule,
+                networkModule,
+                repositoryModule,
+                serviceModule,
+                uiModule,
+                domainModule
+            )
         }
     }
 }

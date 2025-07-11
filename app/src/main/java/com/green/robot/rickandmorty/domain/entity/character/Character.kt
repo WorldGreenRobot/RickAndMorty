@@ -1,4 +1,4 @@
-package com.green.robot.rickandmorty.data.entity
+package com.green.robot.rickandmorty.domain.entity.character
 
 import androidx.compose.runtime.Immutable
 

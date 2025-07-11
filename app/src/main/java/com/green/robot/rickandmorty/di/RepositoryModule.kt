@@ -1,11 +1,16 @@
 package com.green.robot.rickandmorty.di
 
-import com.green.robot.rickandmorty.data.impl.CharactersRepositoryImpl
-import com.green.robot.rickandmorty.data.repository.CharactersRepository
+import com.green.robot.rickandmorty.data.impl.character.CharactersRepositoryImpl
+import com.green.robot.rickandmorty.data.impl.episode.EpisodeRepositoryImpl
+import com.green.robot.rickandmorty.domain.repository.character.CharactersRepository
+import com.green.robot.rickandmorty.domain.repository.episode.EpisodesRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
     factory<CharactersRepository> {
         CharactersRepositoryImpl(get())
+    }
+    factory<EpisodesRepository> {
+        EpisodeRepositoryImpl(get())
     }
 }

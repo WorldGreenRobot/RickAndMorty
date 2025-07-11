@@ -12,15 +12,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.green.robot.rickandmorty.data.entity.Character
+import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.presenter.navigation.CharacterDetail
-import com.green.robot.rickandmorty.presenter.navigation.Characters
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.view.CharacterItem
 import org.koin.compose.viewmodel.koinViewModel
@@ -52,6 +52,10 @@ private fun CharactersContent(
         topBar = {
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 title = { Text(text = "Characters") }
             )
         }
@@ -68,7 +72,7 @@ private fun CharactersContent(
                     character = it,
                     modifier = Modifier
                         .clickable {
-                            onAction(CharactersAction.OpenCharacterDetail(it.id))
+                            onAction(CharactersAction.OpenCharacterDetail(it.id, it.name))
                         }
                 )
             }
@@ -81,7 +85,8 @@ private fun handleAction(action: CharactersAction, navController: NavController)
         is CharactersAction.OpenCharacterDetail -> {
             navController.navigate(
                 CharacterDetail(
-                    id = action.id
+                    id = action.id,
+                    characterName = action.characterName
                 )
             )
         }
@@ -89,7 +94,7 @@ private fun handleAction(action: CharactersAction, navController: NavController)
 }
 
 sealed interface CharactersAction {
-    data class OpenCharacterDetail(val id: Int) : CharactersAction
+    data class OpenCharacterDetail(val id: Int, val characterName: String) : CharactersAction
 }
 
 @Composable

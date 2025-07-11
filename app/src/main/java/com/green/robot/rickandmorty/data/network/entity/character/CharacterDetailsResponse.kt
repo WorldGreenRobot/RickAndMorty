@@ -1,10 +1,10 @@
-package com.green.robot.rickandmorty.data.network.entity
+package com.green.robot.rickandmorty.data.network.entity.character
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CharacterResponse(
+data class CharacterDetailsResponse(
     @SerialName("id")
     val id: Int?,
     @SerialName("name")
@@ -15,6 +15,16 @@ data class CharacterResponse(
     val species: String?,
     @SerialName("gender")
     val gender: String?,
+    @SerialName("origin")
+    val origin: LocationResponse?,
     @SerialName("image")
-    val image: String?
-)
+    val image: String?,
+    @SerialName("episode")
+    val episode: List<String>?
+) {
+    @Serializable
+    data class LocationResponse(
+        @SerialName("name")
+        val name: String?
+    )
+}

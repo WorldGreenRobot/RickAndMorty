@@ -1,7 +1,7 @@
-package com.green.robot.rickandmorty.data.mapper
+package com.green.robot.rickandmorty.data.mapper.character
 
-import com.green.robot.rickandmorty.data.network.entity.CharactersResponse
-import com.green.robot.rickandmorty.data.entity.Character
+import com.green.robot.rickandmorty.data.network.entity.character.CharactersResponse
+import com.green.robot.rickandmorty.domain.entity.character.Character
 
 object CharactersMapper {
     fun List<CharactersResponse.Result>.mapNetworkToDomain(): List<Character> {

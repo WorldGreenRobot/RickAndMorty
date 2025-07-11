@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
                         val character: CharacterDetail = it.toRoute()
                         CharacterDetailScreen(
                             character.id,
+                            character.characterName,
                             navController
                         )
                     }
