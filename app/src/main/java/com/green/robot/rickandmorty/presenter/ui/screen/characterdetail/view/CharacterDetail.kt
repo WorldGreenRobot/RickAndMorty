@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
+import com.green.robot.rickandmorty.domain.entity.character.Gender
+import com.green.robot.rickandmorty.domain.entity.character.Status
+import com.green.robot.rickandmorty.presenter.extensions.getGenderString
 
 @Composable
 fun CharacterDetailView(
@@ -66,7 +69,7 @@ fun CharacterDetailView(
             ) {
                 Detail(
                     title = stringResource(R.string.gender),
-                    param = characterDetail.gender,
+                    param = characterDetail.gender.getGenderString(),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Detail(
@@ -114,9 +117,9 @@ private fun CharacterDetailViewPreview() {
             characterDetail = CharacterDetail(
                 id = 1,
                 name = "Rick Sanchez",
-                status = "Alive",
+                status = Status.ALIVE,
                 species = "Human",
-                gender = "Male",
+                gender = Gender.MALE,
                 image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
                 origin = "Earth"
             )

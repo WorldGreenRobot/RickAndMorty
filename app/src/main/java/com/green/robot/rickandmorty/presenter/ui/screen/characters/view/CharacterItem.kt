@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -20,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +32,11 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.Character
+import com.green.robot.rickandmorty.domain.entity.character.Gender
+import com.green.robot.rickandmorty.domain.entity.character.Status
+import com.green.robot.rickandmorty.presenter.extensions.getGenderString
+import com.green.robot.rickandmorty.presenter.extensions.getStatusColor
+import com.green.robot.rickandmorty.presenter.extensions.getStatusString
 
 @Composable
 fun CharacterItem(
@@ -52,7 +59,12 @@ fun CharacterItem(
                 model = character.image,
                 contentDescription = character.name,
                 loading = {
-                    CircularProgressIndicator()
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 },
                 error = {
                     Image(
@@ -63,6 +75,7 @@ fun CharacterItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .defaultMinSize(minHeight = 200.dp)
                     .align(Alignment.Center)
             )
             Row(
@@ -76,14 +89,16 @@ fun CharacterItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(18.dp)
+                Box(
+                    modifier = Modifier
+                        .background(
+                            character.status.getStatusColor(),
+                            CircleShape
+                        )
+                        .size(8.dp),
                 )
                 Text(
-                    text = character.status,
+                    text = character.status.getStatusString(),
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
@@ -107,7 +122,7 @@ fun CharacterItem(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = "${character.gender} | ${character.species} ",
+                text = "${character.gender.getGenderString()} | ${character.species} ",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 12.sp
             )
@@ -123,9 +138,9 @@ private fun CharactersScreenPreview() {
             character = Character(
                 id = 1,
                 name = "Rick Sanchez",
-                status = "Alive",
+                status = Status.ALIVE,
                 species = "Human",
-                gender = "Male",
+                gender = Gender.MALE,
                 image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
             )
         )
