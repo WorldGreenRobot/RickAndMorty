@@ -32,6 +32,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavController
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.Character
+import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.domain.entity.character.Gender
 import com.green.robot.rickandmorty.domain.entity.character.Status
 import com.green.robot.rickandmorty.presenter.navigation.CharacterDetail
@@ -253,7 +254,7 @@ sealed interface CharactersAction {
     object SearchCharacter : CharactersAction
     object Refresh : CharactersAction
     object OpenFilterDialog : CharactersAction
-    data class RemoveFilter(val filterType: CharactersState.FilterData.FilterType) : CharactersAction
+    data class RemoveFilter(val filterType: FilterType) : CharactersAction
 }
 
 @Composable

@@ -1,6 +1,7 @@
 package com.green.robot.rickandmorty.presenter.ui.screen.characters
 
 import androidx.lifecycle.ViewModel
+import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.domain.entity.usecase.character.GetCharactersUseCase
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -84,9 +85,9 @@ class CharactersViewModel(
         }
     }
 
-    fun removeFilter(type: CharactersState.FilterData.FilterType) = intent {
+    fun removeFilter(type: FilterType) = intent {
         when (type) {
-            CharactersState.FilterData.FilterType.GENDER -> reduce {
+            FilterType.GENDER -> reduce {
                 state.copy(
                     showFirstLoading = true,
                     filterData = state.filterData?.copy(
@@ -95,7 +96,7 @@ class CharactersViewModel(
                 )
             }
 
-            CharactersState.FilterData.FilterType.SPECIES -> reduce {
+            FilterType.SPECIES -> reduce {
                 state.copy(
                     showFirstLoading = true,
                     filterData = state.filterData?.copy(
@@ -104,13 +105,17 @@ class CharactersViewModel(
                 )
             }
 
-            CharactersState.FilterData.FilterType.STATUS -> reduce {
+            FilterType.STATUS -> reduce {
                 state.copy(
                     showFirstLoading = true,
                     filterData = state.filterData?.copy(
                         status = null
                     )
                 )
+            }
+
+            else -> {
+                // no-op
             }
         }
         loadData()
@@ -124,13 +129,22 @@ class CharactersViewModel(
         }
     }
 
-    private fun createCharactersQuery(): Map<String, String> {
+    private fun createCharactersQuery(): Map<FilterType, String> {
         val state = container.stateFlow.value
-        val queries = mutableMapOf<String, String>().apply {
-            if (!state.search.isNullOrBlank()) put("name", state.search)
-            if (!state.filterData?.status.isNullOrBlank()) put("status", state.filterData.status)
-            if (!state.filterData?.gender.isNullOrBlank()) put("gender", state.filterData.gender)
-            if (!state.filterData?.species.isNullOrBlank()) put("species", state.filterData.species)
+        val queries = mutableMapOf<FilterType, String>().apply {
+            if (!state.search.isNullOrBlank()) put(FilterType.NAME, state.search)
+            if (!state.filterData?.status.isNullOrBlank()) put(
+                FilterType.STATUS,
+                state.filterData.status
+            )
+            if (!state.filterData?.gender.isNullOrBlank()) put(
+                FilterType.GENDER,
+                state.filterData.gender
+            )
+            if (!state.filterData?.species.isNullOrBlank()) put(
+                FilterType.SPECIES,
+                state.filterData.species
+            )
         }
         return queries
     }

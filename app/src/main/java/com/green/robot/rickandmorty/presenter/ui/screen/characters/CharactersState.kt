@@ -1,6 +1,7 @@
 package com.green.robot.rickandmorty.presenter.ui.screen.characters
 
 import com.green.robot.rickandmorty.domain.entity.character.Character
+import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.CharactersState.FilterData
 
 data class CharactersState(
@@ -36,12 +37,6 @@ data class CharactersState(
             val type: FilterType,
             val value: String,
         )
-
-        enum class FilterType {
-            STATUS,
-            SPECIES,
-            GENDER
-        }
     }
 }
 

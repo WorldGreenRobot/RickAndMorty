@@ -1,6 +1,8 @@
 package com.green.robot.rickandmorty.data.mapper.character
 
+import com.green.robot.rickandmorty.data.database.entity.CharacterDb
 import com.green.robot.rickandmorty.data.network.entity.character.CharacterDetailsResponse
+import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.entity.character.Gender
 import com.green.robot.rickandmorty.domain.entity.character.Status
