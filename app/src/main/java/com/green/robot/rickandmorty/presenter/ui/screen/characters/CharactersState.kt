@@ -7,15 +7,14 @@ data class CharactersState(
     val showFirstLoading: Boolean = true,
     val showRefreshLoading: Boolean = false,
     val data: List<Character>? = null,
+    val search: String? = null,
     val filterData: FilterData? = null,
     val error: String? = null,
     val dialogs: List<CharactersDialog> = emptyList()
 ) {
     data class FilterData(
-        val name: String? = null,
         val status: String? = null,
         val species: String? = null,
-        val type: String? = null,
         val gender: String? = null,
     )
 }

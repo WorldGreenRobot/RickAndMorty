@@ -1,7 +1,7 @@
 package com.green.robot.rickandmorty.domain.entity.character
 
 enum class Status {
-    ALIVE, DEAD, UNKNOWN;
+    EMPTY, ALIVE, DEAD, UNKNOWN;
 
     companion object {
         fun getStatus(status: String): Status {

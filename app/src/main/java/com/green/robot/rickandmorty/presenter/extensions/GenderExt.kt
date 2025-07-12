@@ -11,3 +11,9 @@ fun Gender.getGenderString(): String {
         it.uppercase()
     }
 }
+
+@Composable
+@ReadOnlyComposable
+fun List<Gender>.getGenderStrings(): List<String> {
+    return this.map { it.getGenderString() }
+}
