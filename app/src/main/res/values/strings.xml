@@ -12,4 +12,5 @@
     <string name="gender_filter">Gender</string>
     <string name="filter_filter">Filter</string>
     <string name="race_filter">Race</string>
+    <string name="filters">Filters</string>
 </resources>

@@ -2,12 +2,16 @@ package com.green.robot.rickandmorty.presenter.ui.screen.characters
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +39,7 @@ import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.LoadingView
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.components.SearchableTopAppBar
+import com.green.robot.rickandmorty.presenter.ui.components.chip.FilterInputChip
 import com.green.robot.rickandmorty.presenter.ui.dialogs.FilterBottomSheetDialog
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.view.CharacterItem
 import org.koin.compose.viewmodel.koinViewModel
@@ -75,7 +80,7 @@ private fun CharactersContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                   onAction(CharactersAction.OpenFilterDialog)
+                    onAction(CharactersAction.OpenFilterDialog)
                 },
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary
@@ -94,12 +99,12 @@ private fun CharactersContent(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
-                currentSearchQuery = state.filterData?.name.orEmpty(),
+                currentSearchQuery = state.search.orEmpty(),
                 onSearchQueryChange = {
                     onAction(CharactersAction.UpdateSearchQuery(it))
                 },
                 onSearchExecute = {
-                    onAction(CharactersAction.SearchCharacter(it))
+                    onAction(CharactersAction.SearchCharacter)
                 },
                 isSearchActive = isShowSearch.value,
                 onSearchActiveChange = {
@@ -128,21 +133,56 @@ private fun CharactersContent(
             }
 
             else -> {
-                LazyVerticalGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top= 16.dp)
                 ) {
-                    items(state.data, key = { it.id }) {
-                        CharacterItem(
-                            character = it,
-                            modifier = Modifier
-                                .clickable {
-                                    onAction(CharactersAction.OpenCharacterDetail(it.id, it.name))
-                                }
+                    if (!state.filterData?.filters.isNullOrEmpty()) {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            text = stringResource(R.string.filters),
+                            fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
+                            fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize
                         )
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(state.filterData.filters) {
+                                FilterInputChip(
+                                    text = it.value,
+                                    onDismiss = {
+                                        onAction(CharactersAction.RemoveFilter(it.type))
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    LazyVerticalGrid(
+                        modifier = Modifier.fillMaxSize(),
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(state.data, key = { it.id }) {
+                            CharacterItem(
+                                character = it,
+                                modifier = Modifier
+                                    .clickable {
+                                        onAction(
+                                            CharactersAction.OpenCharacterDetail(
+                                                it.id,
+                                                it.name
+                                            )
+                                        )
+                                    }
+                            )
+                        }
                     }
                 }
             }
@@ -151,13 +191,16 @@ private fun CharactersContent(
 }
 
 @Composable
-private fun Dialogs(dialogs: List<CharactersDialog>, viewModel: CharactersViewModel){
+private fun Dialogs(dialogs: List<CharactersDialog>, viewModel: CharactersViewModel) {
     dialogs.fastForEach {
-        when(it){
+        when (it) {
             is CharactersDialog.FilterCharacters -> {
                 FilterBottomSheetDialog(
                     onDismissRequest = {
                         viewModel.closeFilterDialog(it)
+                    },
+                    onPositiveButtonClick = { status, gender, species ->
+                        viewModel.setFilter(status, gender, species)
                     },
                     filterCharacters = it.filterData,
                     modifier = Modifier.fillMaxWidth()
@@ -187,7 +230,7 @@ private fun handleAction(
         }
 
         is CharactersAction.SearchCharacter -> {
-            viewModel.searchCharacter(action.query)
+            viewModel.searchCharacter()
         }
 
         is CharactersAction.Refresh -> {
@@ -197,15 +240,20 @@ private fun handleAction(
         is CharactersAction.OpenFilterDialog -> {
             viewModel.openFilterDialog()
         }
+
+        is CharactersAction.RemoveFilter -> {
+            viewModel.removeFilter(action.filterType)
+        }
     }
 }
 
 sealed interface CharactersAction {
     data class OpenCharacterDetail(val id: Int, val characterName: String) : CharactersAction
     data class UpdateSearchQuery(val query: String) : CharactersAction
-    data class SearchCharacter(val query: String) : CharactersAction
+    object SearchCharacter : CharactersAction
     object Refresh : CharactersAction
     object OpenFilterDialog : CharactersAction
+    data class RemoveFilter(val filterType: CharactersState.FilterData.FilterType) : CharactersAction
 }
 
 @Composable

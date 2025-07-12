@@ -49,37 +49,71 @@ class CharactersViewModel(
     fun updateSearch(query: String) = intent {
         reduce {
             state.copy(
-                filterData = state.filterData?.copy(
-                    name = query
+                showFirstLoading = true,
+                search = query
+            )
+        }
+        loadData()
+    }
+
+    fun searchCharacter() = intent {
+        loadData()
+    }
+
+    fun setFilter(status: String, gender: String, race: String) = intent {
+        reduce {
+            state.copy(
+                showFirstLoading = true,
+                filterData = CharactersState.FilterData(
+                    status = status,
+                    species = race,
+                    gender = gender
                 )
             )
         }
-    }
-
-    fun searchCharacter(query: String) = intent {
-        reduce {
-            state.copy(
-                showRefreshLoading = true
-            )
-        }
-        val characters = getCharactersUseCase(mapOf("name" to query))
-        reduce {
-            state.copy(
-                showRefreshLoading = false,
-                data = characters.getOrNull(),
-                error = null
-            )
-        }
+        loadData()
     }
 
     fun openFilterDialog() = intent {
         reduce {
             state.copy(
                 dialogs = state.dialogs + CharactersDialog.FilterCharacters(
-
+                    state.filterData ?: CharactersState.FilterData()
                 )
             )
         }
+    }
+
+    fun removeFilter(type: CharactersState.FilterData.FilterType) = intent {
+        when (type) {
+            CharactersState.FilterData.FilterType.GENDER -> reduce {
+                state.copy(
+                    showFirstLoading = true,
+                    filterData = state.filterData?.copy(
+                        gender = null
+                    )
+                )
+            }
+
+            CharactersState.FilterData.FilterType.SPECIES -> reduce {
+                state.copy(
+                    showFirstLoading = true,
+                    filterData = state.filterData?.copy(
+                        species = null
+                    )
+                )
+            }
+
+            CharactersState.FilterData.FilterType.STATUS -> reduce {
+                state.copy(
+                    showFirstLoading = true,
+                    filterData = state.filterData?.copy(
+                        status = null
+                    )
+                )
+            }
+        }
+        loadData()
     }
 
     fun closeFilterDialog(dialog: CharactersDialog) = intent {
@@ -91,6 +125,13 @@ class CharactersViewModel(
     }
 
     private fun createCharactersQuery(): Map<String, String> {
-        return hashMapOf()
+        val state = container.stateFlow.value
+        val queries = mutableMapOf<String, String>().apply {
+            if (!state.search.isNullOrBlank()) put("name", state.search)
+            if (!state.filterData?.status.isNullOrBlank()) put("status", state.filterData.status)
+            if (!state.filterData?.gender.isNullOrBlank()) put("gender", state.filterData.gender)
+            if (!state.filterData?.species.isNullOrBlank()) put("species", state.filterData.species)
+        }
+        return queries
     }
 }

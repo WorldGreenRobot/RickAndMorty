@@ -16,13 +16,40 @@ data class CharactersState(
         val status: String? = null,
         val species: String? = null,
         val gender: String? = null,
-    )
+    ) {
+        val filters: List<FilterValue>
+            get() {
+                val tempFilter = mutableListOf<FilterValue>()
+                if (!status.isNullOrBlank())
+                    tempFilter.add(FilterValue(FilterType.STATUS, status))
+
+                if (!species.isNullOrBlank())
+                    tempFilter.add(FilterValue(FilterType.SPECIES, species))
+
+                if (!gender.isNullOrBlank())
+                    tempFilter.add(FilterValue(FilterType.GENDER, gender))
+
+                return tempFilter
+            }
+
+        data class FilterValue(
+            val type: FilterType,
+            val value: String,
+        )
+
+        enum class FilterType {
+            STATUS,
+            SPECIES,
+            GENDER
+        }
+    }
 }
 
-sealed interface CharactersDialog{
+
+sealed interface CharactersDialog {
     data class FilterCharacters(
         val filterData: FilterData? = null,
-    ): CharactersDialog
+    ) : CharactersDialog
 }
 
 

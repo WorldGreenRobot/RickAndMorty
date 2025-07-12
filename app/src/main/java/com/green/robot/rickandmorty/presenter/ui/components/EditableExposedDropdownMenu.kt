@@ -19,6 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import com.green.robot.rickandmorty.R
 
 @Composable
 fun ExposedDropdownMenu(
@@ -27,9 +30,11 @@ fun ExposedDropdownMenu(
     label: String,
     modifier: Modifier = Modifier,
     selectedOption: String = "",
+    defaultSelectedOption: String = ""
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf(selectedOption) }
+
+    val focusManager = LocalFocusManager.current
 
     ExposedDropdownMenuBox(
         modifier = modifier.fillMaxWidth(),
@@ -41,11 +46,9 @@ fun ExposedDropdownMenu(
         OutlinedTextField(
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
             readOnly = true,
-            value = selectedOptionText,
-            onValueChange = {
-                onSelectedOption(it)
-            },
-            label = { if (selectedOptionText.isEmpty()) Text(label) else null },
+            value = selectedOption,
+            onValueChange = {},
+            label = { if (selectedOption.isBlank()) Text(label) else null },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
@@ -69,7 +72,8 @@ fun ExposedDropdownMenu(
                         Text(it)
                     },
                     onClick = {
-                        selectedOptionText = it
+                        onSelectedOption(if (it.equals(defaultSelectedOption, true)) "" else it)
+                        focusManager.clearFocus()
                         expanded = false
                     }
                 )

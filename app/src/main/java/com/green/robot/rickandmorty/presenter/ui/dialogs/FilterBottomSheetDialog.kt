@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,13 +41,14 @@ import com.green.robot.rickandmorty.presenter.ui.screen.characters.CharactersSta
 @Composable
 fun FilterBottomSheetDialog(
     onDismissRequest: () -> Unit,
+    onPositiveButtonClick: (status: String, gender: String, race: String) -> Unit,
     filterCharacters: CharactersState.FilterData?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     
-    val status by remember { mutableStateOf(filterCharacters?.status.orEmpty()) }
-    val gender by remember { mutableStateOf(filterCharacters?.gender.orEmpty()) }
-    val race by remember { mutableStateOf(filterCharacters?.species.orEmpty()) }
+    var status by remember { mutableStateOf(filterCharacters?.status.orEmpty()) }
+    var gender by remember { mutableStateOf(filterCharacters?.gender.orEmpty()) }
+    var race by remember { mutableStateOf(filterCharacters?.species.orEmpty()) }
     
     BasicAlertDialog(
         modifier = modifier.background(
@@ -80,9 +82,10 @@ fun FilterBottomSheetDialog(
                 options = Status.entries.getStatusStrings(),
                 selectedOption = status,
                 onSelectedOption = {
-
+                    status = it
                 },
-                label = stringResource(R.string.status_filter)
+                label = stringResource(R.string.status_filter),
+                defaultSelectedOption = Status.entries.first().name
             )
 
             ExposedDropdownMenu(
@@ -92,9 +95,10 @@ fun FilterBottomSheetDialog(
                 options = Gender.entries.getGenderStrings(),
                 selectedOption = gender,
                 onSelectedOption = {
-
+                    gender = it
                 },
-                label = stringResource(R.string.gender_filter)
+                label = stringResource(R.string.gender_filter),
+                defaultSelectedOption = Gender.entries.first().name
             )
             OutlinedTextField(
                 modifier = Modifier
@@ -103,7 +107,7 @@ fun FilterBottomSheetDialog(
                 readOnly = true,
                 value = race,
                 onValueChange = {
-
+                    race = it
                 },
                 label = { if (filterCharacters?.species.isNullOrBlank()) Text(stringResource(R.string.race_filter)) else null },
                 colors = TextFieldDefaults.colors(
@@ -126,7 +130,7 @@ fun FilterBottomSheetDialog(
                 horizontalArrangement = Arrangement.End
             ) {
                 Button(
-                    onClick = {}
+                    onClick = onDismissRequest
                 ) {
                     Text(
                         text = stringResource(android.R.string.cancel)
@@ -134,7 +138,14 @@ fun FilterBottomSheetDialog(
                 }
                 Button(
                     modifier = Modifier.padding(start = 8.dp),
-                    onClick = {}
+                    onClick = {
+                        onPositiveButtonClick(
+                            status,
+                            gender,
+                            race
+                        )
+                        onDismissRequest()
+                    }
                 ) {
                     Text(
                         text = stringResource(android.R.string.ok)
@@ -150,6 +161,7 @@ fun FilterBottomSheetDialog(
 fun FilterBottomSheetDialogPreview() {
     FilterBottomSheetDialog(
         onDismissRequest = {},
+        onPositiveButtonClick = { _, _, _ -> },
         filterCharacters = CharactersState.FilterData(
             status = "",
             species = "",
