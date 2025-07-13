@@ -1,4 +1,4 @@
-package com.green.robot.rickandmorty.domain.entity.usecase.character
+package com.green.robot.rickandmorty.domain.usecase.character
 
 import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.domain.repository.character.CharactersRepository

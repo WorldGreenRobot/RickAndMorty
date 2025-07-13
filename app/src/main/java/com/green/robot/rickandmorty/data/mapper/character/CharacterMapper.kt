@@ -1,5 +1,6 @@
 package com.green.robot.rickandmorty.data.mapper.character
 
+import androidx.core.net.toUri
 import com.green.robot.rickandmorty.data.database.entity.CharacterDb
 import com.green.robot.rickandmorty.data.network.entity.character.CharacterDetailsResponse
 import com.green.robot.rickandmorty.domain.entity.character.Character
@@ -15,9 +16,12 @@ object CharacterMapper {
             status = Status.getStatus(this.status.orEmpty()),
             species = this.species.orEmpty(),
             gender = Gender.getGender(this.gender.orEmpty()),
-            origin = this.origin?.name.orEmpty(),
+            originId = this.origin?.url?.toUri()?.lastPathSegment.orEmpty(),
+            originName = this.origin?.name.orEmpty(),
             image = this.image.orEmpty(),
-            episodes = this.episode.orEmpty()
+            episodes = this.episode?.map { it.toUri().lastPathSegment }
+                .orEmpty()
+                .filterNotNull()
         )
     }
 }

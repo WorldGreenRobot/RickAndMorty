@@ -1,5 +1,6 @@
 package com.green.robot.rickandmorty.data.network.entity.character
 
+import com.green.robot.rickandmorty.data.network.entity.location.LocationResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -25,6 +26,8 @@ data class CharacterDetailsResponse(
     @Serializable
     data class LocationResponse(
         @SerialName("name")
-        val name: String?
+        val name: String?,
+        @SerialName("url")
+        val url: String?
     )
 }

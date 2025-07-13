@@ -14,4 +14,12 @@ val databaseModule = module {
     factory {
         get<AppDatabase>().characterDao()
     }
+
+    factory {
+        get<AppDatabase>().episodeDao()
+    }
+
+    factory {
+        get<AppDatabase>().locationDao()
+    }
 }

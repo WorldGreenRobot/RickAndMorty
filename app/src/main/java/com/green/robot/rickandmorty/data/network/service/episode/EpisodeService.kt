@@ -6,6 +6,6 @@ import retrofit2.http.Path
 
 interface EpisodeService {
 
-    @GET("episode/{id}")
-    suspend fun getEpisodeById(@Path("id") id: Int): EpisodeResponse
+    @GET("episode/{ids}")
+    suspend fun getEpisodesByIds(@Path("ids") ids: String): List<EpisodeResponse>
 }

@@ -8,7 +8,7 @@ import androidx.room.Update
 import com.green.robot.rickandmorty.data.database.entity.CharacterDb
 
 @Dao
-interface CharactersDao {
+interface CharacterDao {
     @Query("SELECT * FROM characters")
     suspend fun getCharacters(): List<CharacterDb>
 

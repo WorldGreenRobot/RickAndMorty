@@ -1,6 +1,6 @@
 package com.green.robot.rickandmorty.data.impl.character
 
-import com.green.robot.rickandmorty.data.database.dao.CharactersDao
+import com.green.robot.rickandmorty.data.database.dao.CharacterDao
 import com.green.robot.rickandmorty.data.mapper.character.CharacterMapper.mapNetworkToDomain
 import com.green.robot.rickandmorty.data.mapper.character.CharactersMapper.mapDbToDomain
 import com.green.robot.rickandmorty.data.mapper.character.CharactersMapper.mapDomainToDb
@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 class CharactersRepositoryImpl(
     private val charactersService: CharactersService,
     private val networkState: NetworkState,
-    private val charactersDao: CharactersDao
+    private val charactersDao: CharacterDao
 ) : CharactersRepository {
     override suspend fun getCharacters(
         options: Map<FilterType, String>
