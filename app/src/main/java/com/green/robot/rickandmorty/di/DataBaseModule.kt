@@ -22,4 +22,8 @@ val databaseModule = module {
     factory {
         get<AppDatabase>().locationDao()
     }
+
+    factory {
+        get<AppDatabase>().characterDetailsDao()
+    }
 }

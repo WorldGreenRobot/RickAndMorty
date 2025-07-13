@@ -10,5 +10,5 @@ interface CharactersRepository {
         options: Map<FilterType, String>
     ): Result<List<Character>>
 
-    suspend fun getCharacterById(id: Int): Result<CharacterDetail>
+    suspend fun getCharacterById(id: Int): Result<CharacterDetail?>
 }
