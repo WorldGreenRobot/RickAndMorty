@@ -30,4 +30,8 @@ val databaseModule = module {
     factory {
         get<AppDatabase>().remoteKeysDao()
     }
+
+    factory {
+        get<AppDatabase>().filterDao()
+    }
 }

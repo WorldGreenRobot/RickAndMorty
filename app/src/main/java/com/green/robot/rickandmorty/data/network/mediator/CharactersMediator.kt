@@ -1,5 +1,6 @@
 package com.green.robot.rickandmorty.data.network.mediator
 
+import androidx.core.net.toUri
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -25,7 +26,9 @@ class CharactersMediator(
     override suspend fun initialize(): InitializeAction {
         val cacheTimeout = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
 
-        return if (System.currentTimeMillis() - (appDatabase.remoteKeysDao().getCreationTime() ?: 0) < cacheTimeout) {
+        return if (System.currentTimeMillis() - (appDatabase.remoteKeysDao().getCreationTime()
+                ?: 0) < cacheTimeout
+        ) {
             InitializeAction.SKIP_INITIAL_REFRESH
         } else {
             InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -36,44 +39,62 @@ class CharactersMediator(
         loadType: LoadType,
         state: PagingState<Int, CharacterDb>
     ): MediatorResult {
-        return try {
-            val page = when (loadType) {
-                LoadType.REFRESH -> {
-                    val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                    remoteKeys?.nextKey?.minus(1) ?: 1
-                }
 
-                LoadType.PREPEND -> {
-                    val remoteKeys = getRemoteKeyForFirstItem(state)
-                    val prevKey = remoteKeys?.prevKey
-                        ?: return MediatorResult.Success(
-                            endOfPaginationReached = remoteKeys != null
-                        )
-                    prevKey
-                }
+        val page = when (loadType) {
+            LoadType.REFRESH -> 1
 
-                LoadType.APPEND -> {
-                    val remoteKeys = getRemoteKeyForLastItem(state)
-                    val nextKey = remoteKeys?.nextKey
-                        ?: return MediatorResult.Success(
-                            endOfPaginationReached = remoteKeys != null
-                        )
-                    nextKey
-                }
+            LoadType.PREPEND -> {
+                val remoteKeys = getRemoteKeyForFirstItem(state)
+                val prevKey = remoteKeys?.prevKey
+                    ?: return MediatorResult.Success(
+                        endOfPaginationReached = remoteKeys != null
+                    )
+                prevKey
             }
 
-            val apiResult = character.getCharacters(page)
+            LoadType.APPEND -> {
+                val remoteKeys = getRemoteKeyForLastItem(state)
+                val nextKey = remoteKeys?.nextKey
+                    ?: return MediatorResult.Success(
+                        endOfPaginationReached = remoteKeys != null
+                    )
+                nextKey
+            }
+        }
 
-            val characters = apiResult.results
-            val endOfPaginationReached = characters.isEmpty()
-
+        return try {
+            var endOfPaginationReached = false
             appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     remoteKeysDao.clearRemoteKeys()
                     characterDao.deleteAllCharacters()
                 }
-                val prevKey = if (page > 1) page - 1 else null
-                val nextKey = if (endOfPaginationReached) null else page + 1
+                val filterData = appDatabase.filterDao().getAll().firstOrNull()
+                val options = mutableMapOf<String, String>().apply {
+                    put("page", page.toString())
+                    filterData?.name?.let {
+                        put("name", it)
+                    }
+                    filterData?.status?.let {
+                        put("status", it)
+                    }
+                    filterData?.gender?.let {
+                        put("gender", it)
+                    }
+                    filterData?.species?.let {
+                        put("species", it)
+                    }
+                }
+
+                val apiResult = character.getCharacters(options)
+                val characters = apiResult.results
+                endOfPaginationReached = characters.isEmpty()
+
+
+                val prevKey =
+                    apiResult.info?.prev?.toUri()?.getQueryParameter("page")?.toIntOrNull()
+                val nextKey =
+                    apiResult.info?.next?.toUri()?.getQueryParameter("page")?.toIntOrNull()
                 val remoteKeys = characters.map {
                     RemoteKeys(
                         characterId = it.id ?: 0,
@@ -95,14 +116,6 @@ class CharactersMediator(
             MediatorResult.Error(e)
         } catch (e: HttpException) {
             MediatorResult.Error(e)
-        }
-    }
-
-    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, CharacterDb>): RemoteKeys? {
-        return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.id?.let { id ->
-                remoteKeysDao.getRemoteKeyByCharacterID(id)
-            }
         }
     }
 

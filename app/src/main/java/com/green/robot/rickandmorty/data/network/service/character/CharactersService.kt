@@ -5,11 +5,15 @@ import com.green.robot.rickandmorty.data.network.entity.character.CharactersResp
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface CharactersService {
 
     @GET("character")
     suspend fun getCharacters(@Query("page") id: Int): CharactersResponse
+
+    @GET("character")
+    suspend fun getCharacters(@QueryMap queries: Map<String, String>): CharactersResponse
 
     @GET("character/{id}")
     suspend fun getCharacterById(@Path("id") id: Int): CharacterDetailsResponse

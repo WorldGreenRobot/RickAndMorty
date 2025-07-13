@@ -70,7 +70,7 @@ fun CharactersScreen(
         }
     )
 
-    Dialogs(state.dialogs, viewModel)
+    Dialogs(state.dialogs, viewModel, characterItems)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -186,7 +186,7 @@ private fun CharactersContent(
                 modifier = Modifier
                     .fillMaxSize()
             )
-        } else if (!isFirstLoading && characterItems?.itemCount == 0) {
+        } else if (characterItems?.itemCount == 0 && !isFirstLoading) {
             EmptyList(
                 modifier = Modifier
                     .fillMaxSize()
@@ -194,7 +194,7 @@ private fun CharactersContent(
                 text = stringResource(R.string.characters_not_found)
             )
         } else {
-            if ((characterItems?.itemCount ?: 0) > 0) {
+            if((characterItems?.itemCount?:0) > 0) {
                 isFirstLoading = false
             }
             LazyVerticalGrid(
@@ -234,7 +234,11 @@ private fun CharactersContent(
 }
 
 @Composable
-private fun Dialogs(dialogs: List<CharactersDialog>, viewModel: CharactersViewModel) {
+private fun Dialogs(
+    dialogs: List<CharactersDialog>,
+    viewModel: CharactersViewModel,
+    characterItems: LazyPagingItems<Character>?
+) {
     dialogs.fastForEach {
         when (it) {
             is CharactersDialog.FilterCharacters -> {
@@ -244,6 +248,7 @@ private fun Dialogs(dialogs: List<CharactersDialog>, viewModel: CharactersViewMo
                     },
                     onPositiveButtonClick = { status, gender, species ->
                         viewModel.setFilter(status, gender, species)
+                        characterItems?.refresh()
                     },
                     filterCharacters = it.filterData,
                     modifier = Modifier.fillMaxWidth()
@@ -271,10 +276,11 @@ private fun handleAction(
 
         is CharactersAction.UpdateSearchQuery -> {
             viewModel.updateSearch(action.query)
+            characterItems?.refresh()
         }
 
         is CharactersAction.SearchCharacter -> {
-            viewModel.searchCharacter()
+            characterItems?.refresh()
         }
 
         is CharactersAction.Refresh -> {

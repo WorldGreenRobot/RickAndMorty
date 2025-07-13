@@ -3,23 +3,46 @@ package com.green.robot.rickandmorty.presenter.ui.screen.characters
 import androidx.lifecycle.ViewModel
 import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.domain.usecase.character.GetCharactersUseCase
+import com.green.robot.rickandmorty.domain.usecase.filter.GetFilterUseCase
+import com.green.robot.rickandmorty.domain.usecase.filter.SetFilterUseCase
+import com.green.robot.rickandmorty.presenter.mapper.filter.FilterMapper.mapToUi
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 
 class CharactersViewModel(
-    private val getCharactersUseCase: GetCharactersUseCase
+    private val getCharactersUseCase: GetCharactersUseCase,
+    private val getFilterUseCase: GetFilterUseCase,
+    private val setFilterUseCase: SetFilterUseCase
 ) : ViewModel(), ContainerHost<CharactersState, Nothing> {
     override val container: Container<CharactersState, Nothing> = container(CharactersState())
 
     init {
         loadData()
+        loadFilter()
     }
 
     fun loadData() = intent {
         reduce {
             state.copy(
-                data = getCharactersUseCase(createCharactersQuery()),
+                data = getCharactersUseCase(),
+            )
+        }
+        val filter = getFilterUseCase()
+        reduce {
+            state.copy(
+                filterData = filter.mapToUi(),
+                search = filter[FilterType.NAME]
+            )
+        }
+    }
+
+    private fun loadFilter() = intent {
+        val filter = getFilterUseCase()
+        reduce {
+            state.copy(
+                filterData = filter.mapToUi(),
+                search = filter[FilterType.NAME]
             )
         }
     }
@@ -30,11 +53,7 @@ class CharactersViewModel(
                 search = query
             )
         }
-        loadData()
-    }
-
-    fun searchCharacter() = intent {
-        loadData()
+        setFilterUseCase(createCharactersQuery())
     }
 
     fun setFilter(status: String, gender: String, species: String) = intent {
@@ -47,7 +66,7 @@ class CharactersViewModel(
                 )
             )
         }
-        loadData()
+        setFilterUseCase(createCharactersQuery())
     }
 
     fun openFilterDialog() = intent {

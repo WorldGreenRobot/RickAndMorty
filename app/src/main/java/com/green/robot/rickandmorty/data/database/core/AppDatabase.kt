@@ -5,11 +5,13 @@ import androidx.room.RoomDatabase
 import com.green.robot.rickandmorty.data.database.dao.CharacterDao
 import com.green.robot.rickandmorty.data.database.dao.CharacterDetailDao
 import com.green.robot.rickandmorty.data.database.dao.EpisodeDao
+import com.green.robot.rickandmorty.data.database.dao.FilterDao
 import com.green.robot.rickandmorty.data.database.dao.LocationDao
 import com.green.robot.rickandmorty.data.database.dao.RemoteKeysDao
 import com.green.robot.rickandmorty.data.database.entity.CharacterDb
 import com.green.robot.rickandmorty.data.database.entity.CharacterDetailDb
 import com.green.robot.rickandmorty.data.database.entity.EpisodeDb
+import com.green.robot.rickandmorty.data.database.entity.FilterDb
 import com.green.robot.rickandmorty.data.database.entity.LocationDb
 import com.green.robot.rickandmorty.data.database.entity.RemoteKeys
 
@@ -20,7 +22,8 @@ import com.green.robot.rickandmorty.data.database.entity.RemoteKeys
         EpisodeDb::class,
         LocationDb::class,
         CharacterDetailDb::class,
-        RemoteKeys::class
+        RemoteKeys::class,
+        FilterDb::class,
     ]
 )
 abstract class AppDatabase: RoomDatabase() {
@@ -29,4 +32,5 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun locationDao(): LocationDao
     abstract fun characterDetailsDao(): CharacterDetailDao
     abstract fun remoteKeysDao(): RemoteKeysDao
+    abstract fun filterDao(): FilterDao
 }

@@ -124,6 +124,9 @@ fun CharacterItem(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 text = "${character.gender.getGenderString()} | ${character.species} ",
+                maxLines = 1,
+                softWrap = true,
+                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 12.sp
             )

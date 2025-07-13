@@ -13,7 +13,6 @@ import com.green.robot.rickandmorty.data.network.mediator.CharactersMediator
 import com.green.robot.rickandmorty.data.network.service.character.CharactersService
 import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
-import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.domain.repository.character.CharactersRepository
 import com.green.robot.rickandmorty.utils.android.NetworkState
 import kotlinx.coroutines.Dispatchers
@@ -28,9 +27,8 @@ class CharactersRepositoryImpl(
     private val appDatabase: AppDatabase
 ) : CharactersRepository {
     @OptIn(ExperimentalPagingApi::class)
-    override fun getCharacters(
-        options: Map<FilterType, String>
-    ): Flow<PagingData<Character>> {
+    override fun getCharacters(): Flow<PagingData<Character>> {
+
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
@@ -41,16 +39,18 @@ class CharactersRepositoryImpl(
                 charactersService
             ),
             pagingSourceFactory = {
+                val filterData = appDatabase.filterDao().getAll().firstOrNull()
                 appDatabase.characterDao().searchCharacters(
-                    options[FilterType.NAME],
-                    options[FilterType.STATUS],
-                    options[FilterType.SPECIES],
-                    options[FilterType.GENDER]
+                    filterData?.name,
+                    filterData?.status,
+                    filterData?.species,
+                    filterData?.gender
                 )
             }
         ).flow.map {
             it.mapDbToDomain()
         }.flowOn(Dispatchers.IO)
+
     }
 
     override suspend fun getCharacterById(id: Int): Result<CharacterDetail?> {
