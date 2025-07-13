@@ -27,6 +27,7 @@ import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.entity.character.Gender
 import com.green.robot.rickandmorty.domain.entity.character.Status
+import com.green.robot.rickandmorty.domain.entity.location.Location
 import com.green.robot.rickandmorty.presenter.extensions.getGenderString
 
 @Composable
@@ -77,11 +78,6 @@ fun CharacterDetailView(
                     param = characterDetail.species,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Detail(
-                    title = stringResource(R.string.origin),
-                    param = characterDetail.origin,
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
         }
     }
@@ -121,7 +117,14 @@ private fun CharacterDetailViewPreview() {
                 species = "Human",
                 gender = Gender.MALE,
                 image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
-                origin = "Earth"
+                location = CharacterDetail.Location(
+                    "1",
+                    ""
+                ),
+                origin = CharacterDetail.Location(
+                    "1",
+                    ""
+                )
             )
         )
     }

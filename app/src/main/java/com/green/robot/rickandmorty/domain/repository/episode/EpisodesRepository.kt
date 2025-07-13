@@ -4,5 +4,5 @@ import com.green.robot.rickandmorty.domain.entity.episode.Episode
 import kotlinx.coroutines.flow.Flow
 
 interface EpisodesRepository {
-    suspend fun getEpisodesByIds(ids: List<Int>): Result<List<Episode>>
+    suspend fun getEpisodesByIds(ids: List<String>): Result<List<Episode>>
 }
