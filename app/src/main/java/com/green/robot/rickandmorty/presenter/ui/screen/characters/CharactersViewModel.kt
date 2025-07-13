@@ -2,7 +2,7 @@ package com.green.robot.rickandmorty.presenter.ui.screen.characters
 
 import androidx.lifecycle.ViewModel
 import com.green.robot.rickandmorty.domain.entity.character.FilterType
-import com.green.robot.rickandmorty.domain.entity.usecase.character.GetCharactersUseCase
+import com.green.robot.rickandmorty.domain.usecase.character.GetCharactersUseCase
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container

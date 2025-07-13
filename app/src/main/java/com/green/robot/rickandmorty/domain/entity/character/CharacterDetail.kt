@@ -9,7 +9,13 @@ data class CharacterDetail(
     val status: Status,
     val species: String,
     val gender: Gender,
-    val origin: String,
+    val origin: Location,
+    val location: Location,
     val image: String,
     val episodes: List<String> = emptyList()
-)
+) {
+    data class Location(
+        val id: String?,
+        val name: String
+    )
+}

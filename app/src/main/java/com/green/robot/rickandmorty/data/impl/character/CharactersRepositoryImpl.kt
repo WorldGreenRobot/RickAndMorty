@@ -1,6 +1,9 @@
 package com.green.robot.rickandmorty.data.impl.character
 
-import com.green.robot.rickandmorty.data.database.dao.CharactersDao
+import com.green.robot.rickandmorty.data.database.dao.CharacterDao
+import com.green.robot.rickandmorty.data.database.dao.CharacterDetailDao
+import com.green.robot.rickandmorty.data.mapper.character.CharacterMapper.mapDbToDomain
+import com.green.robot.rickandmorty.data.mapper.character.CharacterMapper.mapDomainToDb
 import com.green.robot.rickandmorty.data.mapper.character.CharacterMapper.mapNetworkToDomain
 import com.green.robot.rickandmorty.data.mapper.character.CharactersMapper.mapDbToDomain
 import com.green.robot.rickandmorty.data.mapper.character.CharactersMapper.mapDomainToDb
@@ -17,7 +20,8 @@ import kotlinx.coroutines.withContext
 class CharactersRepositoryImpl(
     private val charactersService: CharactersService,
     private val networkState: NetworkState,
-    private val charactersDao: CharactersDao
+    private val charactersDao: CharacterDao,
+    private val characterDetailDao: CharacterDetailDao
 ) : CharactersRepository {
     override suspend fun getCharacters(
         options: Map<FilterType, String>
@@ -47,10 +51,17 @@ class CharactersRepositoryImpl(
         }
     }
 
-    override suspend fun getCharacterById(id: Int): Result<CharacterDetail> {
+    override suspend fun getCharacterById(id: Int): Result<CharacterDetail?> {
         return withContext(Dispatchers.IO) {
             try {
-                val character = charactersService.getCharacterById(id).mapNetworkToDomain()
+                val character = if (networkState.isAccessNetwork()) {
+                    charactersService.getCharacterById(id).mapNetworkToDomain()
+                        .also {
+                            characterDetailDao.insert(it.mapDomainToDb())
+                        }
+                } else {
+                    characterDetailDao.getCharacterDetailById(id)?.mapDbToDomain()
+                }
                 Result.success(character)
             } catch (e: Exception) {
                 Result.failure(e)

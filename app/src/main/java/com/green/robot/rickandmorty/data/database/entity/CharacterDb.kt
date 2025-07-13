@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
 @Entity(tableName = "characters")
-@TypeConverters
 data class CharacterDb (
     @PrimaryKey
     @ColumnInfo(name = "id")

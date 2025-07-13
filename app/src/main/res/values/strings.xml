@@ -3,7 +3,7 @@
     <string name="gender">Gender:</string>
     <string name="race">Race:</string>
     <string name="origin">Origin:</string>
-    <string name="episodes">Episodes</string>
+    <string name="episodes">Episodes (%d)</string>
     <string name="search_character">Search character</string>
     <string name="characters">Characters</string>
     <string name="repeat">Repeat</string>
@@ -13,4 +13,8 @@
     <string name="filter_filter">Filter</string>
     <string name="race_filter">Race</string>
     <string name="filters">Filters</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="unknown">unknown</string>
+    <string name="location">Location</string>
 </resources>
