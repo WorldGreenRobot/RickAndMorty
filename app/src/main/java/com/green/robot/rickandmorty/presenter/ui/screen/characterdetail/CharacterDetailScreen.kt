@@ -217,7 +217,10 @@ private fun LocationView(
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = location.dimension
+                    text = if (location.dimension.equals(stringResource(R.string.unknown), true))
+                        stringResource(R.string.dimensions, location.dimension)
+                    else
+                        location.dimension
                 )
             } else {
                 Text(

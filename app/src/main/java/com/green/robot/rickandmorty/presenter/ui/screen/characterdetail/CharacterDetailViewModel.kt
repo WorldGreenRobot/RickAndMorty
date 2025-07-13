@@ -41,7 +41,8 @@ class CharacterDetailViewModel(
     fun refresh() = intent {
         reduce {
             state.copy(
-                showRefresh = true,
+                showRefresh = state.data == null,
+                showLoading = state.data != null,
                 error = null
             )
         }

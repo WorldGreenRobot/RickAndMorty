@@ -78,10 +78,12 @@ fun Screen(
         }
     )
     val snackbarAction = stringResource(R.string.repeat)
-    LaunchedEffect(uiError) {
-        if (uiError != null) {
+    val errorMessage =
+        if (!uiError.isNullOrBlank()) stringResource(R.string.default_error) else null
+    LaunchedEffect(uiError, errorMessage) {
+        if (uiError != null && errorMessage != null) {
             snackbarHostState.showSnackbar(
-                uiError,
+                errorMessage,
                 actionLabel = snackbarAction,
                 duration = SnackbarDuration.Indefinite
             ).let {

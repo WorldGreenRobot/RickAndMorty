@@ -89,17 +89,16 @@ private fun Detail(
     param: String,
     modifier: Modifier = Modifier,
 ) {
-    Column (
+    Column(
         modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = title,
             fontSize = 16.sp
         )
         Text(
-            modifier = Modifier.align(alignment = Alignment.End),
             text = param,
-            textAlign = TextAlign.End,
             fontSize = 16.sp
         )
     }

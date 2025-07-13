@@ -19,4 +19,6 @@
     <string name="hide">Hide</string>
     <string name="unknown">unknown</string>
     <string name="location">Location</string>
+    <string name="dimensions">Dimensions %s</string>
+    <string name="default_error">An error has occurred.</string>
 </resources>
