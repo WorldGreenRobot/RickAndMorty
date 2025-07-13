@@ -74,7 +74,7 @@ fun CharacterDetailView(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Detail(
-                    title = stringResource(R.string.race),
+                    title = stringResource(R.string.species),
                     param = characterDetail.species,
                     modifier = Modifier.fillMaxWidth()
                 )

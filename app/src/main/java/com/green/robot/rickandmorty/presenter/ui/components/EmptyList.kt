@@ -21,6 +21,7 @@ import com.green.robot.rickandmorty.presenter.ui.theme.Grey10
 @Composable
 fun EmptyList(
     modifier: Modifier = Modifier,
+    text: String
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -35,8 +36,8 @@ fun EmptyList(
         )
 
         Text(
-            modifier = modifier,
-            text = stringResource(R.string.characters_not_found)
+            modifier = Modifier,
+            text = text
         )
     }
 }
@@ -45,6 +46,8 @@ fun EmptyList(
 @Preview(showBackground = true)
 private fun EmptyListPreview() {
     MaterialTheme {
-        EmptyList()
+        EmptyList(
+            text = stringResource(R.string.characters_not_found)
+        )
     }
 }

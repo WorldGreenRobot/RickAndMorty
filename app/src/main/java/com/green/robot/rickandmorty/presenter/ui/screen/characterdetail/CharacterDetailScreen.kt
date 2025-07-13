@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
@@ -74,8 +75,6 @@ private fun CharacterContent(
     name: String,
     onAction: (CharacterDetailAction) -> Unit
 ) {
-
-    val status = state.data?.characterDetail?.status?.getStatusString()
     Screen(
         modifier = Modifier.fillMaxSize(),
         isRefreshing = state.showRefresh,
@@ -87,9 +86,22 @@ private fun CharacterContent(
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
-                    Text(
-                        text = "$name ${if (state.data != null || !state.showLoading) "($status)" else ""}"
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = name,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        state.data?.characterDetail?.status?.let {
+                            Text(
+                                text = it.getStatusString(),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -130,7 +142,8 @@ private fun CharacterContent(
                     EmptyList(
                         modifier = Modifier
                             .fillMaxSize()
-                            .align(Alignment.Center)
+                            .align(Alignment.Center),
+                        text = stringResource(R.string.detail_not_loading)
                     )
                 }
 
@@ -239,7 +252,22 @@ sealed interface CharacterDetailAction {
 }
 
 @Composable
-@Preview
+@Preview(name = "Detail is Empty")
+private fun CharacterDetailScreenEmptyPreview() {
+    MaterialTheme {
+        CharacterContent(
+            state = CharacterDetailState(
+                showLoading = false,
+                data = null
+            ),
+            name = "Rick Sanchez",
+            onAction = {}
+        )
+    }
+}
+
+@Composable
+@Preview(name = "Detail is Success")
 private fun CharacterDetailScreenPreview() {
     MaterialTheme {
         CharacterContent(

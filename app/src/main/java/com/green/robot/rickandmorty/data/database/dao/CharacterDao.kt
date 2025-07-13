@@ -1,5 +1,6 @@
 package com.green.robot.rickandmorty.data.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -22,12 +23,12 @@ interface CharacterDao {
         AND (:species IS NULL OR species LIKE '%' || :species || '%')
         AND (:gender IS NULL OR gender = :gender)
     """)
-    suspend fun searchCharacters(
+    fun searchCharacters(
         name: String? = null,
         status: String? = null,
         species: String? = null,
         gender: String? = null
-    ): List<CharacterDb>
+    ): PagingSource<Int, CharacterDb>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacters(characters: List<CharacterDb>)

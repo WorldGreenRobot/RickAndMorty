@@ -6,7 +6,7 @@ import com.green.robot.rickandmorty.domain.repository.character.CharactersReposi
 class GetCharactersUseCase(
     private val charactersRepository: CharactersRepository
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         options: Map<FilterType, String>
     ) = charactersRepository.getCharacters(options)
 }

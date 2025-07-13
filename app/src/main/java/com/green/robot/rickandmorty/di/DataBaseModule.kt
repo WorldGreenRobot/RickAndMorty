@@ -26,4 +26,8 @@ val databaseModule = module {
     factory {
         get<AppDatabase>().characterDetailsDao()
     }
+
+    factory {
+        get<AppDatabase>().remoteKeysDao()
+    }
 }

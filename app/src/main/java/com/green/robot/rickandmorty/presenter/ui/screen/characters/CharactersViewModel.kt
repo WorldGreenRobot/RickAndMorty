@@ -17,40 +17,16 @@ class CharactersViewModel(
     }
 
     fun loadData() = intent {
-        val characters = getCharactersUseCase(createCharactersQuery())
-        when {
-            characters.isSuccess -> reduce {
-                state.copy(
-                    showFirstLoading = false,
-                    showRefreshLoading = false,
-                    data = characters.getOrNull(),
-                    error = null
-                )
-            }
-
-            characters.isFailure -> reduce {
-                state.copy(
-                    showFirstLoading = false,
-                    showRefreshLoading = false,
-                    error = characters.exceptionOrNull()?.message
-                )
-            }
-        }
-    }
-
-    fun refresh() = intent {
         reduce {
             state.copy(
-                showRefreshLoading = true
+                data = getCharactersUseCase(createCharactersQuery()),
             )
         }
-        loadData()
     }
 
     fun updateSearch(query: String) = intent {
         reduce {
             state.copy(
-                showFirstLoading = true,
                 search = query
             )
         }
@@ -61,13 +37,12 @@ class CharactersViewModel(
         loadData()
     }
 
-    fun setFilter(status: String, gender: String, race: String) = intent {
+    fun setFilter(status: String, gender: String, species: String) = intent {
         reduce {
             state.copy(
-                showFirstLoading = true,
                 filterData = CharactersState.FilterData(
                     status = status,
-                    species = race,
+                    species = species,
                     gender = gender
                 )
             )
@@ -83,42 +58,6 @@ class CharactersViewModel(
                 )
             )
         }
-    }
-
-    fun removeFilter(type: FilterType) = intent {
-        when (type) {
-            FilterType.GENDER -> reduce {
-                state.copy(
-                    showFirstLoading = true,
-                    filterData = state.filterData?.copy(
-                        gender = null
-                    )
-                )
-            }
-
-            FilterType.SPECIES -> reduce {
-                state.copy(
-                    showFirstLoading = true,
-                    filterData = state.filterData?.copy(
-                        species = null
-                    )
-                )
-            }
-
-            FilterType.STATUS -> reduce {
-                state.copy(
-                    showFirstLoading = true,
-                    filterData = state.filterData?.copy(
-                        status = null
-                    )
-                )
-            }
-
-            else -> {
-                // no-op
-            }
-        }
-        loadData()
     }
 
     fun closeFilterDialog(dialog: CharactersDialog) = intent {

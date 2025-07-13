@@ -1,5 +1,6 @@
 package com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,12 +37,10 @@ fun EpisodesContainer(
     episodes: List<Episode>,
     modifier: Modifier = Modifier
 ) {
-
     val collapsedState = remember { mutableStateOf(StateEpisodesContainer.COLLAPSED) }
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .animateContentSize(),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
@@ -49,7 +48,6 @@ fun EpisodesContainer(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .animateContentSize()
         ) {
             Row(
                 modifier = Modifier
@@ -79,7 +77,7 @@ fun EpisodesContainer(
                 }
             }
 
-            if (collapsedState.value == StateEpisodesContainer.EXPANDED || episodes.size <= DEFAULT_SHOW_EPISODES) {
+            AnimatedVisibility(collapsedState.value == StateEpisodesContainer.EXPANDED || episodes.size <= DEFAULT_SHOW_EPISODES) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
