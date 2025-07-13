@@ -1,16 +1,15 @@
 package com.green.robot.rickandmorty.presenter.ui.screen.characters
 
+import androidx.paging.PagingData
 import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.CharactersState.FilterData
+import kotlinx.coroutines.flow.Flow
 
 data class CharactersState(
-    val showFirstLoading: Boolean = true,
-    val showRefreshLoading: Boolean = false,
-    val data: List<Character>? = null,
+    val data: Flow<PagingData<Character>>? = null,
     val search: String? = null,
     val filterData: FilterData? = null,
-    val error: String? = null,
     val dialogs: List<CharactersDialog> = emptyList()
 ) {
     data class FilterData(

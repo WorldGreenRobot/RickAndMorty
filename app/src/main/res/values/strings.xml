@@ -1,18 +1,20 @@
 <resources>
     <string name="app_name">RickAndMorty</string>
     <string name="gender">Gender:</string>
-    <string name="race">Race:</string>
+    <string name="species">Species:</string>
     <string name="origin">Origin:</string>
     <string name="episodes">Episodes (%d)</string>
     <string name="search_character">Search character</string>
+    <string name="search">Search: </string>
     <string name="characters">Characters</string>
     <string name="repeat">Repeat</string>
     <string name="characters_not_found">Characters Not Found</string>
+    <string name="detail_not_loading">Detail Not Found</string>
     <string name="status_filter">Status</string>
     <string name="gender_filter">Gender</string>
     <string name="filter_filter">Filter</string>
-    <string name="race_filter">Race</string>
-    <string name="filters">Filters</string>
+    <string name="species_filter">Species</string>
+    <string name="filters">Filters:</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="unknown">unknown</string>

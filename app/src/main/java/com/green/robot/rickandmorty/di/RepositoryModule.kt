@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
     factory<CharactersRepository> {
-        CharactersRepositoryImpl(get(), get(), get(), get())
+        CharactersRepositoryImpl(get(), get(), get())
     }
     factory<EpisodesRepository> {
         EpisodeRepositoryImpl(get(), get(), get())

@@ -69,4 +69,5 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.material.icons.extended )
+    implementation(libs.bundles.paging)
 }

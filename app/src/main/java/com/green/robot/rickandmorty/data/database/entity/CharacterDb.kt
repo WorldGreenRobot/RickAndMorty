@@ -20,4 +20,5 @@ data class CharacterDb (
     val gender: String,
     @ColumnInfo(name = "image")
     val image: String
+
 )

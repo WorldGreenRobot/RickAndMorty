@@ -4,14 +4,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,15 +23,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.Character
-import com.green.robot.rickandmorty.domain.entity.character.FilterType
 import com.green.robot.rickandmorty.domain.entity.character.Gender
 import com.green.robot.rickandmorty.domain.entity.character.Status
 import com.green.robot.rickandmorty.presenter.navigation.CharacterDetail
@@ -40,9 +45,9 @@ import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.LoadingView
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.components.SearchableTopAppBar
-import com.green.robot.rickandmorty.presenter.ui.components.chip.FilterInputChip
 import com.green.robot.rickandmorty.presenter.ui.dialogs.FilterBottomSheetDialog
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.view.CharacterItem
+import kotlinx.coroutines.flow.flowOf
 import org.koin.compose.viewmodel.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -53,10 +58,15 @@ fun CharactersScreen(
 ) {
     val state by viewModel.collectAsState()
 
+    val characterItems = state.data?.collectAsLazyPagingItems()
+    val loadState = characterItems?.loadState
+
     CharactersContent(
         state = state,
+        loadState = loadState?.mediator,
+        characterItems = characterItems,
         onAction = {
-            handleAction(it, navigateController, viewModel)
+            handleAction(it, navigateController, viewModel, characterItems)
         }
     )
 
@@ -67,14 +77,29 @@ fun CharactersScreen(
 @Composable
 private fun CharactersContent(
     state: CharactersState,
+    loadState: LoadStates? = null,
+    characterItems: LazyPagingItems<Character>? = null,
     onAction: (CharactersAction) -> Unit = {}
 ) {
     val isShowSearch = remember { mutableStateOf(false) }
 
+    var isFirstLoading by remember { mutableStateOf(true) }
+
+    val error = remember(loadState) {
+        mutableStateOf(
+            if (loadState?.refresh is LoadState.Error || loadState?.append is LoadState.Error) {
+                if (loadState.append is LoadState.Error)
+                    (loadState.append as LoadState.Error).error
+                else
+                    (loadState.refresh as LoadState.Error).error
+            } else null
+        )
+    }
+
     Screen(
         modifier = Modifier.fillMaxSize(),
-        isRefreshing = state.showRefreshLoading,
-        uiError = state.error,
+        isRefreshing = loadState?.refresh == LoadState.Loading && !isFirstLoading,
+        uiError = error.value?.message,
         onRefresh = {
             onAction(CharactersAction.Refresh)
         },
@@ -95,10 +120,46 @@ private fun CharactersContent(
         topBar = {
             SearchableTopAppBar(
                 title = {
-                    Text(
-                        text = stringResource(R.string.characters),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = stringResource(R.string.characters),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            if (!state.search.isNullOrEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.search),
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = 12.sp
+                                )
+
+                                Text(
+                                    text = state.search,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = 12.sp
+                                )
+                            }
+
+                            if (!state.filterData?.filters.isNullOrEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.filters),
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = 12.sp
+                                )
+                                state.filterData.filters.fastForEach {
+                                    Text(
+                                        it.value,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
                 },
                 currentSearchQuery = state.search.orEmpty(),
                 onSearchQueryChange = {
@@ -120,70 +181,51 @@ private fun CharactersContent(
             )
         }
     ) {
-        when {
-            state.showFirstLoading -> {
-                LoadingView(
-                    modifier = Modifier.fillMaxSize(),
-                )
+        if (loadState?.prepend is LoadState.Loading) {
+            LoadingView(
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        } else if (!isFirstLoading && characterItems?.itemCount == 0) {
+            EmptyList(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                text = stringResource(R.string.characters_not_found)
+            )
+        } else {
+            if ((characterItems?.itemCount ?: 0) > 0) {
+                isFirstLoading = false
             }
-
-            state.data.isNullOrEmpty() -> {
-                EmptyList(
-                    modifier = Modifier
-                )
-            }
-
-            else -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top= 16.dp)
-                ) {
-                    if (!state.filterData?.filters.isNullOrEmpty()) {
-                        Text(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            text = stringResource(R.string.filters),
-                            fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
-                            fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize
-                        )
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(state.filterData.filters) {
-                                FilterInputChip(
-                                    text = it.value,
-                                    onDismiss = {
-                                        onAction(CharactersAction.RemoveFilter(it.type))
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    LazyVerticalGrid(
-                        modifier = Modifier.fillMaxSize(),
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(state.data, key = { it.id }) {
-                            CharacterItem(
-                                character = it,
-                                modifier = Modifier
-                                    .clickable {
-                                        onAction(
-                                            CharactersAction.OpenCharacterDetail(
-                                                it.id,
-                                                it.name
-                                            )
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxSize(),
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(characterItems?.itemCount ?: 0) {
+                    val item = characterItems?.get(it)
+                    item?.let {
+                        CharacterItem(
+                            character = it,
+                            modifier = Modifier
+                                .clickable {
+                                    onAction(
+                                        CharactersAction.OpenCharacterDetail(
+                                            it.id,
+                                            it.name
                                         )
-                                    }
-                            )
-                        }
+                                    )
+                                }
+                        )
+                    }
+                }
+                item {
+                    if (loadState?.append == LoadState.Loading) {
+                        LoadingView(
+                            modifier = Modifier.fillMaxSize(),
+                        )
                     }
                 }
             }
@@ -214,7 +256,8 @@ private fun Dialogs(dialogs: List<CharactersDialog>, viewModel: CharactersViewMo
 private fun handleAction(
     action: CharactersAction,
     navController: NavController,
-    viewModel: CharactersViewModel
+    viewModel: CharactersViewModel,
+    characterItems: LazyPagingItems<Character>?
 ) {
     when (action) {
         is CharactersAction.OpenCharacterDetail -> {
@@ -235,15 +278,11 @@ private fun handleAction(
         }
 
         is CharactersAction.Refresh -> {
-            viewModel.refresh()
+            characterItems?.refresh()
         }
 
         is CharactersAction.OpenFilterDialog -> {
             viewModel.openFilterDialog()
-        }
-
-        is CharactersAction.RemoveFilter -> {
-            viewModel.removeFilter(action.filterType)
         }
     }
 }
@@ -254,44 +293,61 @@ sealed interface CharactersAction {
     object SearchCharacter : CharactersAction
     object Refresh : CharactersAction
     object OpenFilterDialog : CharactersAction
-    data class RemoveFilter(val filterType: FilterType) : CharactersAction
+}
+
+
+@Preview
+@Composable
+private fun CharactersScreenEmptyPreview() {
+    MaterialTheme {
+        CharactersContent(
+            state = CharactersState(
+                data = flowOf(
+                    PagingData.from(
+                        emptyList()
+                    )
+                )
+            )
+        )
+    }
 }
 
 @Composable
-@Preview
+@Preview(name = "Characters Success")
 private fun CharactersScreenPreview() {
     MaterialTheme {
         CharactersContent(
             state = CharactersState(
-                showRefreshLoading = false,
-                showFirstLoading = false,
-                data = listOf(
-                    Character(
-                        id = 1,
-                        name = "Rick Sanchez",
-                        status = Status.ALIVE,
-                        species = "Human",
-                        gender = Gender.MALE,
-                        image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
-                    ),
-                    Character(
-                        id = 2,
-                        name = "Morty Smith",
-                        status = Status.ALIVE,
-                        species = "Human",
-                        gender = Gender.MALE,
-                        image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
-                    ),
-                    Character(
-                        id = 3,
-                        name = "Summer Smith",
-                        status = Status.ALIVE,
-                        species = "Human",
-                        gender = Gender.MALE,
-                        image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
+                data = flowOf(
+                    PagingData.from(
+                        listOf(
+                            Character(
+                                id = 1,
+                                name = "Rick Sanchez",
+                                status = Status.ALIVE,
+                                species = "Human",
+                                gender = Gender.MALE,
+                                image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
+                            ),
+                            Character(
+                                id = 2,
+                                name = "Morty Smith",
+                                status = Status.ALIVE,
+                                species = "Human",
+                                gender = Gender.MALE,
+                                image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
+                            ),
+                            Character(
+                                id = 3,
+                                name = "Summer Smith",
+                                status = Status.ALIVE,
+                                species = "Human",
+                                gender = Gender.MALE,
+                                image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg"
+                            )
+                        )
                     )
-                ),
-                error = null
+                )
             )
         )
     }
