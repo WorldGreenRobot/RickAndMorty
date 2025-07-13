@@ -17,6 +17,15 @@ object EpisodeMapper {
         }
     }
 
+    fun EpisodeResponse.mapEpisodeNetworkToDomain(): Episode {
+        return Episode(
+            id = this.id ?: 0,
+            name = this.name.orEmpty(),
+            airDate = this.airDate.orEmpty(),
+            episode = this.episode.orEmpty()
+        )
+    }
+
     fun List<Episode>.mapDomainToDb(): List<EpisodeDb> {
         return this.map {
             EpisodeDb(

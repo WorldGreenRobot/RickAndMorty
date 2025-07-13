@@ -8,5 +8,6 @@ import com.green.robot.rickandmorty.domain.entity.location.Location
 data class CharacterDetailData(
     val characterDetail: CharacterDetail,
     val episodes: List<Episode>,
-    val location: Location
+    val origin: Location?,
+    val location: Location?
 )

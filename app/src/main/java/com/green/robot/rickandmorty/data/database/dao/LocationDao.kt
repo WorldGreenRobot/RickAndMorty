@@ -2,6 +2,7 @@ package com.green.robot.rickandmorty.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.green.robot.rickandmorty.data.database.entity.LocationDb
 
@@ -13,7 +14,7 @@ interface LocationDao {
     @Query("SELECT * FROM locations WHERE id = :id")
     fun getById(id: Int): LocationDb
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg locations: LocationDb)
 
     @Query("DELETE FROM locations")

@@ -1,13 +1,17 @@
 package com.green.robot.rickandmorty.presenter.ui.screen.characterdetail
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +41,7 @@ import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.LoadingView
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.CharacterDetailView
-import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.EpisodeItem
+import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.EpisodesContainer
 import org.koin.compose.viewmodel.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -107,60 +111,106 @@ private fun CharacterContent(
             )
         }
     ) {
-        LazyColumn(
+        Box(
             modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .animateContentSize()
+                .verticalScroll(rememberScrollState()),
         ) {
             when {
                 state.showLoading -> {
-                    item {
-                        LoadingView(
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                    LoadingView(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.Center)
+                    )
                 }
 
                 state.data == null && !state.showLoading -> {
-                    item {
-                        EmptyList(
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                    EmptyList(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.Center)
+                    )
                 }
 
                 else -> {
-                    state.data?.characterDetail?.let {
-                        item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        state.data?.characterDetail?.let {
                             CharacterDetailView(
                                 characterDetail = it,
                                 modifier = Modifier
                                     .fillMaxWidth()
                             )
                         }
-                    }
-
-                    item {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp, horizontal = 16.dp),
-                            text = stringResource(R.string.episodes),
-                            textAlign = TextAlign.Start,
-                            style = MaterialTheme.typography.titleMedium
+                        LocationView(
+                            modifier = Modifier.fillMaxWidth(),
+                            location = state.data?.origin,
+                            title = stringResource(R.string.origin)
                         )
-                    }
 
-                    items(state.data?.episodes.orEmpty(), key = { it.id }) {
-                        EpisodeItem(
-                            episode = it,
+                        LocationView(
+                            modifier = Modifier.fillMaxWidth(),
+                            location = state.data?.location,
+                            title = stringResource(R.string.location)
+                        )
+
+                        EpisodesContainer(
+                            episodes = state.data?.episodes.orEmpty(),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LocationView(
+    modifier: Modifier = Modifier,
+    location: Location?,
+    title: String
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = title,
+                textAlign = TextAlign.Start,
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (location != null) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "${location.type}  ${location.name}"
+                )
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = location.dimension
+                )
+            } else {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.unknown)
+                )
             }
         }
     }
@@ -203,7 +253,14 @@ private fun CharacterDetailScreenPreview() {
                         species = "Human",
                         gender = Gender.MALE,
                         image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
-                        origin = "Earth"
+                        origin = CharacterDetail.Location(
+                            id = "1",
+                            name = "Earth"
+                        ),
+                        location = CharacterDetail.Location(
+                            id = "1",
+                            name = "Earth"
+                        )
                     ),
                     episodes = listOf(
                         Episode(
@@ -226,6 +283,12 @@ private fun CharacterDetailScreenPreview() {
                         ),
                     ),
                     location = Location(
+                        id = 1,
+                        name = "Earth",
+                        type = "Planet",
+                        dimension = "Dimension C-137"
+                    ),
+                    origin = Location(
                         id = 1,
                         name = "Earth",
                         type = "Planet",

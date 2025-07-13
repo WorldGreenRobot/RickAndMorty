@@ -18,6 +18,8 @@ data class CharacterDetailsResponse(
     val gender: String?,
     @SerialName("origin")
     val origin: LocationResponse?,
+    @SerialName("location")
+    val location: LocationResponse?,
     @SerialName("image")
     val image: String?,
     @SerialName("episode")

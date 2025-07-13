@@ -26,45 +26,49 @@ class GetCharacterByIdUseCase(
         }
         val episodeAsync: Deferred<Result<List<Episode>>>
 
-        val locationAsync: Deferred<Result<Location?>>
         coroutineScope {
             episodeAsync = async {
                 getEpisodes(character.episodes)
             }
         }
 
-        coroutineScope {
-            locationAsync = async {
-                getLocation(character.origin)
-            }
-        }
+        val originResult = character.origin.id?.let {
+            getLocation(it)
+        }?.getOrNull()
+
+        val locationResult = character.location.id?.let {
+            getLocation(it)
+        }?.getOrNull()
 
         val episodes = episodeAsync.await()
-        val location = locationAsync.await()
 
-        if (episodes.isFailure || location.isFailure) {
-            return Result.failure(episodes.exceptionOrNull() ?: location.exceptionOrNull()!!)
+        if (episodes.isFailure) {
+            return Result.failure(episodes.exceptionOrNull()!!)
         }
 
         val episodesResult = episodes.getOrNull()
         if (episodesResult == null) {
             return Result.failure(Exception("Episodes not found"))
         }
-        val locationResult = location.getOrNull()
-        if (locationResult == null) {
-            return Result.failure(Exception("Location not found"))
-        }
 
-        return Result.success(CharacterDetailData(character, episodesResult, locationResult))
+        return Result.success(
+            CharacterDetailData(
+                character,
+                episodesResult,
+                originResult,
+                locationResult
+            )
+        )
     }
 
-
-    private suspend fun getLocation(locationId: String): Result<Location?> {
-        val locationResult = locationRepository.getLocationsById(locationId)
-        if (locationResult.isFailure) {
-            return Result.failure(locationResult.exceptionOrNull()!!)
+    private suspend fun getLocation(originId: String): Result<Location?> {
+        val originAsync: Deferred<Result<Location?>>
+        coroutineScope {
+            originAsync = async {
+                locationRepository.getLocationsById(originId)
+            }
         }
-        return Result.success(locationResult.getOrNull())
+        return originAsync.await()
     }
 
     private suspend fun getEpisodes(episodeIds: List<String>): Result<List<Episode>> {

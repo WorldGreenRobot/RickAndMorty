@@ -8,4 +8,7 @@ interface EpisodeService {
 
     @GET("episode/{ids}")
     suspend fun getEpisodesByIds(@Path("ids") ids: String): List<EpisodeResponse>
+
+    @GET("episode/{id}")
+    suspend fun getEpisodeById(@Path("id") id: String): EpisodeResponse
 }
