@@ -1,4 +1,3 @@
-Представляю реализацию тестового задания
 
 Основным стеком выбраны: Kotlin, Coroutines, Flow, Retrofit, OkHttp, Room
 В качестве DI: Koin
