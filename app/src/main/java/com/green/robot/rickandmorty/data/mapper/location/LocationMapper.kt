@@ -1,6 +1,5 @@
 package com.green.robot.rickandmorty.data.mapper.location
 
-import com.green.robot.rickandmorty.data.database.dao.LocationDao
 import com.green.robot.rickandmorty.data.database.entity.LocationDb
 import com.green.robot.rickandmorty.data.network.entity.location.LocationResponse
 import com.green.robot.rickandmorty.domain.entity.location.Location

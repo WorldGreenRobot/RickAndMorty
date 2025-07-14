@@ -96,7 +96,7 @@ fun CharacterItem(
                         .size(8.dp),
                 )
                 Text(
-                    text = character.status.getStatusString(),
+                    text = character.status?.getStatusString().orEmpty(),
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
@@ -113,7 +113,7 @@ fun CharacterItem(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = character.name,
+                text = character.name.orEmpty(),
                 maxLines = 1,
                 softWrap = true,
                 overflow = TextOverflow.Ellipsis,
@@ -123,7 +123,7 @@ fun CharacterItem(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = "${character.gender.getGenderString()} | ${character.species} ",
+                text = "${character.gender?.getGenderString().orEmpty()} | ${character.species} ",
                 maxLines = 1,
                 softWrap = true,
                 overflow = TextOverflow.Ellipsis,

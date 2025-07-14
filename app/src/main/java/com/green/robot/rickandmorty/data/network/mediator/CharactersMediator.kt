@@ -86,16 +86,20 @@ class CharactersMediator(
                     }
                 }
 
-                val apiResult = character.getCharacters(options)
-                val characters = apiResult.results
-                endOfPaginationReached = characters.isEmpty()
+                val apiResult = try {
+                    character.getCharacters(options)
+                } catch (_: HttpException) {
+                    null
+                }
+                val characters = apiResult?.results
+                endOfPaginationReached = characters.isNullOrEmpty()
 
 
                 val prevKey =
-                    apiResult.info?.prev?.toUri()?.getQueryParameter("page")?.toIntOrNull()
+                    apiResult?.info?.prev?.toUri()?.getQueryParameter("page")?.toIntOrNull()
                 val nextKey =
-                    apiResult.info?.next?.toUri()?.getQueryParameter("page")?.toIntOrNull()
-                val remoteKeys = characters.map {
+                    apiResult?.info?.next?.toUri()?.getQueryParameter("page")?.toIntOrNull()
+                val remoteKeys = characters?.map {
                     RemoteKeys(
                         characterId = it.id ?: 0,
                         prevKey = prevKey,
@@ -103,9 +107,9 @@ class CharactersMediator(
                         nextKey = nextKey
                     )
                 }
-                remoteKeysDao.insertAll(remoteKeys)
+                remoteKeysDao.insertAll(remoteKeys.orEmpty())
                 characterDao.insertCharacters(
-                    characters.mapNetworkToDb()
+                    characters?.mapNetworkToDb().orEmpty()
                 )
             }
 
@@ -113,8 +117,6 @@ class CharactersMediator(
                 endOfPaginationReached = endOfPaginationReached
             )
         } catch (e: IOException) {
-            MediatorResult.Error(e)
-        } catch (e: HttpException) {
             MediatorResult.Error(e)
         }
     }

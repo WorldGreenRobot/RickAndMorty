@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -83,8 +82,6 @@ private fun CharactersContent(
 ) {
     val isShowSearch = remember { mutableStateOf(false) }
 
-    var isFirstLoading by remember { mutableStateOf(true) }
-
     val error = remember(loadState) {
         mutableStateOf(
             if (loadState?.refresh is LoadState.Error || loadState?.append is LoadState.Error) {
@@ -98,7 +95,7 @@ private fun CharactersContent(
 
     Screen(
         modifier = Modifier.fillMaxSize(),
-        isRefreshing = loadState?.refresh == LoadState.Loading && !isFirstLoading,
+        isRefreshing = loadState?.append is LoadState.Loading || loadState?.refresh is LoadState.Loading || loadState?.prepend is LoadState.Loading,
         uiError = error.value?.message,
         onRefresh = {
             onAction(CharactersAction.Refresh)
@@ -181,51 +178,49 @@ private fun CharactersContent(
             )
         }
     ) {
-        if (loadState?.prepend is LoadState.Loading) {
-            LoadingView(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        } else if (characterItems?.itemCount == 0 && !isFirstLoading) {
-            EmptyList(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
-                text = stringResource(R.string.characters_not_found)
-            )
-        } else {
-            if((characterItems?.itemCount?:0) > 0) {
-                isFirstLoading = false
+        when {
+            loadState?.append?.endOfPaginationReached == true && (characterItems?.itemCount
+                ?: 0) < 1 -> {
+                EmptyList(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    text = stringResource(R.string.characters_not_found)
+                )
             }
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(characterItems?.itemCount ?: 0) {
-                    val item = characterItems?.get(it)
-                    item?.let {
-                        CharacterItem(
-                            character = it,
-                            modifier = Modifier
-                                .clickable {
-                                    onAction(
-                                        CharactersAction.OpenCharacterDetail(
-                                            it.id,
-                                            it.name
+
+            else -> {
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(characterItems?.itemCount ?: 0) {
+
+                        val item = characterItems?.get(it)
+                        item?.let {
+                            CharacterItem(
+                                character = it,
+                                modifier = Modifier
+                                    .then(if (it.id == null || it.name == null) Modifier else Modifier.clickable {
+                                        onAction(
+                                            CharactersAction.OpenCharacterDetail(
+                                                it.id,
+                                                it.name
+                                            )
                                         )
-                                    )
-                                }
-                        )
+                                    })
+                            )
+                        }
                     }
-                }
-                item {
-                    if (loadState?.append == LoadState.Loading) {
-                        LoadingView(
-                            modifier = Modifier.fillMaxSize(),
-                        )
+                    item {
+                        if (loadState?.append == LoadState.Loading) {
+                            LoadingView(
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                     }
                 }
             }
@@ -276,10 +271,10 @@ private fun handleAction(
 
         is CharactersAction.UpdateSearchQuery -> {
             viewModel.updateSearch(action.query)
-            characterItems?.refresh()
         }
 
         is CharactersAction.SearchCharacter -> {
+            viewModel.requestSearch()
             characterItems?.refresh()
         }
 

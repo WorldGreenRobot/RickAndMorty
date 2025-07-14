@@ -6,7 +6,5 @@ import kotlinx.coroutines.SupervisorJob
 import org.koin.dsl.module
 
 val appModule = module {
-    factory<CoroutineScope>{
-        CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    }
+    factory<CoroutineScope>{ CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 }

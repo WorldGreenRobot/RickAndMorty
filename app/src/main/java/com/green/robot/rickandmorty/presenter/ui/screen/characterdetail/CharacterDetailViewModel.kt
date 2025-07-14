@@ -22,7 +22,6 @@ class CharacterDetailViewModel(
             characterDetail.isSuccess -> reduce {
                 state.copy(
                     showLoading = false,
-                    showRefresh = false,
                     data = characterDetail.getOrNull(),
                     error = null
                 )
@@ -31,7 +30,6 @@ class CharacterDetailViewModel(
             characterDetail.isFailure -> reduce {
                 state.copy(
                     showLoading = false,
-                    showRefresh = false,
                     error = characterDetail.exceptionOrNull()?.message
                 )
             }
@@ -41,8 +39,7 @@ class CharacterDetailViewModel(
     fun refresh() = intent {
         reduce {
             state.copy(
-                showRefresh = state.data == null,
-                showLoading = state.data != null,
+                showLoading = true,
                 error = null
             )
         }

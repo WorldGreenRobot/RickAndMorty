@@ -39,7 +39,6 @@ import com.green.robot.rickandmorty.domain.entity.episode.Episode
 import com.green.robot.rickandmorty.domain.entity.location.Location
 import com.green.robot.rickandmorty.presenter.extensions.getStatusString
 import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
-import com.green.robot.rickandmorty.presenter.ui.components.LoadingView
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.CharacterDetailView
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.EpisodesContainer
@@ -77,7 +76,7 @@ private fun CharacterContent(
 ) {
     Screen(
         modifier = Modifier.fillMaxSize(),
-        isRefreshing = state.showRefresh,
+        isRefreshing = state.showLoading,
         onRefresh = {
             onAction(CharacterDetailAction.OnRefresh)
         },
@@ -130,14 +129,6 @@ private fun CharacterContent(
                 .verticalScroll(rememberScrollState()),
         ) {
             when {
-                state.showLoading -> {
-                    LoadingView(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .align(Alignment.Center)
-                    )
-                }
-
                 state.data == null && !state.showLoading -> {
                     EmptyList(
                         modifier = Modifier
@@ -147,32 +138,31 @@ private fun CharacterContent(
                     )
                 }
 
-                else -> {
+                state.data != null -> {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
-                        state.data?.characterDetail?.let {
-                            CharacterDetailView(
-                                characterDetail = it,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-                        }
+                        CharacterDetailView(
+                            characterDetail = state.data.characterDetail,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+
                         LocationView(
                             modifier = Modifier.fillMaxWidth(),
-                            location = state.data?.origin,
+                            location = state.data.origin,
                             title = stringResource(R.string.origin)
                         )
 
                         LocationView(
                             modifier = Modifier.fillMaxWidth(),
-                            location = state.data?.location,
+                            location = state.data.location,
                             title = stringResource(R.string.location)
                         )
 
                         EpisodesContainer(
-                            episodes = state.data?.episodes.orEmpty(),
+                            episodes = state.data.episodes,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 16.dp, end = 16.dp, top = 16.dp)

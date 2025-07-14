@@ -53,6 +53,9 @@ class CharactersViewModel(
                 search = query
             )
         }
+    }
+
+    fun requestSearch() = intent {
         setFilterUseCase(createCharactersQuery())
     }
 

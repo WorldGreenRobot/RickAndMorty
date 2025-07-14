@@ -12,6 +12,7 @@ data class CharactersState(
     val filterData: FilterData? = null,
     val dialogs: List<CharactersDialog> = emptyList()
 ) {
+
     data class FilterData(
         val status: String? = null,
         val species: String? = null,
