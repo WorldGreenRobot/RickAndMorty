@@ -1,27 +1,40 @@
 package com.green.robot.rickandmorty.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import org.koin.dsl.module
 import retrofit2.Retrofit
 
-val networkModule = module {
+@Module
+@InstallIn(SingletonComponent::class)
+class NetworkModule {
 
-    factory<OkHttpClient> {
-        OkHttpClient.Builder()
+    @Provides
+    fun okHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
             .build()
+
     }
 
-    factory<Retrofit> {
-        val json = Json {
-            ignoreUnknownKeys = true
-        }
-        Retrofit.Builder()
+    @Provides
+    fun json() = Json {
+        ignoreUnknownKeys = true
+    }
+
+    @Provides
+    fun retrofit(
+        okHttpClient: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        return Retrofit.Builder()
             .baseUrl("https://rickandmortyapi.com/api/")
-            .client(get())
+            .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
 

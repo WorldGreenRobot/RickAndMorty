@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
@@ -47,13 +48,12 @@ import com.green.robot.rickandmorty.presenter.ui.components.SearchableTopAppBar
 import com.green.robot.rickandmorty.presenter.ui.dialogs.FilterBottomSheetDialog
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.view.CharacterItem
 import kotlinx.coroutines.flow.flowOf
-import org.koin.compose.viewmodel.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CharactersScreen(
     navigateController: NavController,
-    viewModel: CharactersViewModel = koinViewModel()
+    viewModel: CharactersViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
 
@@ -179,8 +179,7 @@ private fun CharactersContent(
         }
     ) {
         when {
-            loadState?.append?.endOfPaginationReached == true && (characterItems?.itemCount
-                ?: 0) < 1 -> {
+            loadState?.append?.endOfPaginationReached == true && (characterItems?.itemCount ?: 0) < 1 -> {
                 EmptyList(
                     modifier = Modifier
                         .fillMaxSize()

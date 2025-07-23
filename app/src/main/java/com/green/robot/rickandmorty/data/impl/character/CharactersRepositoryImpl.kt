@@ -11,20 +11,25 @@ import com.green.robot.rickandmorty.data.mapper.character.CharacterMapper.mapNet
 import com.green.robot.rickandmorty.data.mapper.character.CharactersMapper.mapDbToDomain
 import com.green.robot.rickandmorty.data.network.mediator.CharactersMediator
 import com.green.robot.rickandmorty.data.network.service.character.CharactersService
+import com.green.robot.rickandmorty.di.Dispatcher
+import com.green.robot.rickandmorty.di.DispatchersType
 import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.repository.character.CharactersRepository
 import com.green.robot.rickandmorty.utils.android.NetworkState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CharactersRepositoryImpl(
+class CharactersRepositoryImpl @Inject constructor(
     private val charactersService: CharactersService,
     private val networkState: NetworkState,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    @Dispatcher(DispatchersType.IO) private val ioDispatcher: CoroutineDispatcher
 ) : CharactersRepository {
     @OptIn(ExperimentalPagingApi::class)
     override fun getCharacters(): Flow<PagingData<Character>> {
@@ -49,12 +54,12 @@ class CharactersRepositoryImpl(
             }
         ).flow.map {
             it.mapDbToDomain()
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(ioDispatcher)
 
     }
 
     override suspend fun getCharacterById(id: Int): Result<CharacterDetail?> {
-        return withContext(Dispatchers.IO) {
+        return withContext(ioDispatcher) {
             try {
                 val character = if (networkState.isAccessNetwork()) {
                     charactersService.getCharacterById(id).mapNetworkToDomain()

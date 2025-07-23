@@ -6,19 +6,24 @@ import com.green.robot.rickandmorty.data.mapper.episode.EpisodeMapper.mapDomainT
 import com.green.robot.rickandmorty.data.mapper.episode.EpisodeMapper.mapEpisodeNetworkToDomain
 import com.green.robot.rickandmorty.data.mapper.episode.EpisodeMapper.mapToDomain
 import com.green.robot.rickandmorty.data.network.service.episode.EpisodeService
+import com.green.robot.rickandmorty.di.Dispatcher
+import com.green.robot.rickandmorty.di.DispatchersType
 import com.green.robot.rickandmorty.domain.entity.episode.Episode
 import com.green.robot.rickandmorty.domain.repository.episode.EpisodesRepository
 import com.green.robot.rickandmorty.utils.android.NetworkState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class EpisodeRepositoryImpl(
+class EpisodeRepositoryImpl @Inject constructor(
     private val episodeService: EpisodeService,
     private val networkState: NetworkState,
-    private val episodeDao: EpisodeDao
+    private val episodeDao: EpisodeDao,
+    @Dispatcher(DispatchersType.IO) private val ioDispatcher: CoroutineDispatcher
 ) : EpisodesRepository {
     override suspend fun getEpisodesByIds(ids: List<String>): Result<List<Episode>> {
-        return withContext(Dispatchers.IO) {
+        return withContext(ioDispatcher) {
             try {
                 val episodes = if (networkState.isAccessNetwork()) {
                     if (ids.size > 1) {

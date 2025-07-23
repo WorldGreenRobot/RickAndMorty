@@ -5,11 +5,9 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.1"
+lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
-composeBom = "2025.06.01"
-koin-bom = "4.1.0"
-koin-android = "4.1.0"
+composeBom = "2025.07.00"
 orbit = "10.0.0"
 room_version = "2.7.2"
 ksp = "2.1.10-1.0.31"
@@ -18,9 +16,11 @@ okhttp = "5.1.0"
 serialization = "1.9.0"
 kotlinx-serialization-converter = "1.0.0"
 coil = "3.2.0"
-nav_version = "2.9.1"
+nav_version = "2.9.2"
 accompanist = "0.36.0"
 paging = "3.3.6"
+hilt = "2.57"
+hilt_nav_compose = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,11 +37,6 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3"}
-koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
-koin-core = { module = "io.insert-koin:koin-core" }
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
-koin-androidx_compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-android" }
-koin-androidx_compose_navigation = { module = "io.insert-koin:koin-androidx-compose-navigation", version.ref = "koin-android" }
 orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbit" }
 orbit-viewmodel = { module = "org.orbit-mvi:orbit-viewmodel", version.ref = "orbit" }
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
@@ -62,6 +57,10 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+viewmodel-compose = {module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref="lifecycleRuntimeKtx"}
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_nav_compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -69,6 +68,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+hilt  = {id = "com.google.dagger.hilt.android", version.ref = "hilt"}
 
 [bundles]
 paging = [
@@ -95,10 +95,4 @@ orbit = [
     "orbit-core",
     "orbit-viewmodel",
     "orbit-compose"
-]
-koin = [
-    "koin-core",
-    "koin-android",
-    "koin-androidx_compose",
-    "koin-androidx_compose_navigation"
 ]

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -55,9 +56,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(project.dependencies.platform(libs.koin.bom))
     implementation(project.dependencies.platform(libs.okhttp.bom))
-    implementation(libs.bundles.koin)
     implementation(libs.bundles.orbit)
     implementation(libs.bundles.room)
     implementation(libs.retrofit)
@@ -70,4 +69,8 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.material.icons.extended )
     implementation(libs.bundles.paging)
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
+    implementation(libs.viewmodel.compose)
+    implementation(libs.hilt.navigation.compose)
 }

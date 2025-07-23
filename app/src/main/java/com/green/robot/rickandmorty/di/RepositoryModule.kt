@@ -8,21 +8,23 @@ import com.green.robot.rickandmorty.domain.repository.character.CharactersReposi
 import com.green.robot.rickandmorty.domain.repository.episode.EpisodesRepository
 import com.green.robot.rickandmorty.domain.repository.filter.FilterRepository
 import com.green.robot.rickandmorty.domain.repository.locaion.LocationRepository
-import org.koin.dsl.module
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-val repositoryModule = module {
-    factory<CharactersRepository> {
-        CharactersRepositoryImpl(get(), get(), get())
-    }
-    factory<EpisodesRepository> {
-        EpisodeRepositoryImpl(get(), get(), get())
-    }
+@Module
+@InstallIn(SingletonComponent::class)
+interface RepositoryModule {
+    @Binds
+    fun bindCharactersRepository(impl: CharactersRepositoryImpl): CharactersRepository
 
-    factory<LocationRepository> {
-        LocationRepositoryImpl(get(), get(), get())
-    }
+    @Binds
+    fun bindEpisodeRepository(impl: EpisodeRepositoryImpl): EpisodesRepository
 
-    factory<FilterRepository> {
-        FilterRepositoryImpl(get())
-    }
+    @Binds
+    fun bindLocationRepository(impl: LocationRepositoryImpl): LocationRepository
+
+    @Binds
+    fun bindFilterRepository(impl: FilterRepositoryImpl): FilterRepository
 }
