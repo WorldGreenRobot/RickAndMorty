@@ -2,8 +2,11 @@ package com.green.robot.rickandmorty.presenter.navigation
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-object Characters
+
+sealed interface AppRoute
 
 @Serializable
-data class CharacterDetail(val id: Int, val characterName: String)
+object Characters: AppRoute
+
+@Serializable
+data class CharacterDetail(val id: Int, val characterName: String): AppRoute

@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetailData
@@ -39,6 +39,7 @@ import com.green.robot.rickandmorty.domain.entity.character.Status
 import com.green.robot.rickandmorty.domain.entity.episode.Episode
 import com.green.robot.rickandmorty.domain.entity.location.Location
 import com.green.robot.rickandmorty.presenter.extensions.getStatusString
+import com.green.robot.rickandmorty.presenter.navigation.AppRoute
 import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.CharacterDetailView
@@ -49,7 +50,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun CharacterDetailScreen(
     id: Int,
     characterName: String,
-    navigateController: NavController,
+    backStack: SnapshotStateList<AppRoute>,
     viewModel: CharacterDetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -62,7 +63,7 @@ fun CharacterDetailScreen(
         state = state,
         name = characterName,
         onAction = {
-            actionHandler(it, navigateController, viewModel)
+            actionHandler(it, backStack, viewModel)
         }
     )
 }
@@ -224,12 +225,12 @@ private fun LocationView(
 
 private fun actionHandler(
     action: CharacterDetailAction,
-    navigateController: NavController,
+    backStack: SnapshotStateList<AppRoute>,
     viewModel: CharacterDetailViewModel
 ) {
     when (action) {
         is CharacterDetailAction.OnBackPressed -> {
-            navigateController.popBackStack()
+            backStack.removeLastOrNull()
         }
 
         is CharacterDetailAction.OnRefresh -> {

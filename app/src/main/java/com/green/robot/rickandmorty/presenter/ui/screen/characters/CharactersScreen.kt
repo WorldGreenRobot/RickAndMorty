@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
@@ -40,6 +40,7 @@ import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.Gender
 import com.green.robot.rickandmorty.domain.entity.character.Status
+import com.green.robot.rickandmorty.presenter.navigation.AppRoute
 import com.green.robot.rickandmorty.presenter.navigation.CharacterDetail
 import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.LoadingView
@@ -52,7 +53,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CharactersScreen(
-    navigateController: NavController,
+    backStack: SnapshotStateList<AppRoute>,
     viewModel: CharactersViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -65,7 +66,7 @@ fun CharactersScreen(
         loadState = loadState?.mediator,
         characterItems = characterItems,
         onAction = {
-            handleAction(it, navigateController, viewModel, characterItems)
+            handleAction(it, backStack, viewModel, characterItems)
         }
     )
 
@@ -254,18 +255,13 @@ private fun Dialogs(
 
 private fun handleAction(
     action: CharactersAction,
-    navController: NavController,
+    backStack: SnapshotStateList<AppRoute>,
     viewModel: CharactersViewModel,
     characterItems: LazyPagingItems<Character>?
 ) {
     when (action) {
         is CharactersAction.OpenCharacterDetail -> {
-            navController.navigate(
-                CharacterDetail(
-                    id = action.id,
-                    characterName = action.characterName
-                )
-            )
+            backStack.add(CharacterDetail(action.id, action.characterName))
         }
 
         is CharactersAction.UpdateSearchQuery -> {
