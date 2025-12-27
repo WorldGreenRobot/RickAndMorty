@@ -94,7 +94,6 @@ class CharactersMediator(
                 val characters = apiResult?.results
                 endOfPaginationReached = characters.isNullOrEmpty()
 
-
                 val prevKey =
                     apiResult?.info?.prev?.toUri()?.getQueryParameter("page")?.toIntOrNull()
                 val nextKey =

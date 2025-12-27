@@ -9,8 +9,9 @@ import com.green.robot.rickandmorty.domain.repository.locaion.LocationRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
-class GetCharacterByIdUseCase(
+class GetCharacterByIdUseCase @Inject constructor(
     private val charactersRepository: CharactersRepository,
     private val episodesRepository: EpisodesRepository,
     private val locationRepository: LocationRepository
