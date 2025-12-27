@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetailData
@@ -38,6 +37,7 @@ import com.green.robot.rickandmorty.domain.entity.character.Status
 import com.green.robot.rickandmorty.domain.entity.episode.Episode
 import com.green.robot.rickandmorty.domain.entity.location.Location
 import com.green.robot.rickandmorty.presenter.extensions.getStatusString
+import com.green.robot.rickandmorty.presenter.navigation.Navigator
 import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.CharacterDetailView
@@ -49,7 +49,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun CharacterDetailScreen(
     id: Int,
     characterName: String,
-    navigateController: NavController,
+    navigator: Navigator,
     viewModel: CharacterDetailViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -62,7 +62,7 @@ fun CharacterDetailScreen(
         state = state,
         name = characterName,
         onAction = {
-            actionHandler(it, navigateController, viewModel)
+            actionHandler(it, navigator, viewModel)
         }
     )
 }
@@ -224,12 +224,12 @@ private fun LocationView(
 
 private fun actionHandler(
     action: CharacterDetailAction,
-    navigateController: NavController,
+    navigator: Navigator,
     viewModel: CharacterDetailViewModel
 ) {
     when (action) {
         is CharacterDetailAction.OnBackPressed -> {
-            navigateController.popBackStack()
+            navigator.goBack()
         }
 
         is CharacterDetailAction.OnRefresh -> {

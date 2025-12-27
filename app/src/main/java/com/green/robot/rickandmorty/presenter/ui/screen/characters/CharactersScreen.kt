@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
-import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
@@ -40,6 +39,7 @@ import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.Gender
 import com.green.robot.rickandmorty.domain.entity.character.Status
 import com.green.robot.rickandmorty.presenter.navigation.CharacterDetail
+import com.green.robot.rickandmorty.presenter.navigation.Navigator
 import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.LoadingView
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
@@ -52,7 +52,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CharactersScreen(
-    navigateController: NavController,
+    navigator: Navigator,
     viewModel: CharactersViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -65,7 +65,7 @@ fun CharactersScreen(
         loadState = loadState?.mediator,
         characterItems = characterItems,
         onAction = {
-            handleAction(it, navigateController, viewModel, characterItems)
+            handleAction(it, navigator, viewModel, characterItems)
         }
     )
 
@@ -255,13 +255,13 @@ private fun Dialogs(
 
 private fun handleAction(
     action: CharactersAction,
-    navController: NavController,
+    navigator: Navigator,
     viewModel: CharactersViewModel,
     characterItems: LazyPagingItems<Character>?
 ) {
     when (action) {
         is CharactersAction.OpenCharacterDetail -> {
-            navController.navigate(
+            navigator.navigate(
                 CharacterDetail(
                     id = action.id,
                     characterName = action.characterName

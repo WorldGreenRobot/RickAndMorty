@@ -1,9 +1,10 @@
 package com.green.robot.rickandmorty.presenter.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-object Characters
+object Characters : NavKey
 
 @Serializable
-data class CharacterDetail(val id: Int, val characterName: String)
+data class CharacterDetail(val id: Int, val characterName: String) : NavKey

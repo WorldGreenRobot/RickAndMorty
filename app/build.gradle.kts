@@ -66,8 +66,12 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.serializarion.converter)
     implementation(libs.bundles.coil)
-    implementation(libs.navigation.compose)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.material.icons.extended )
     implementation(libs.bundles.paging)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.androidx.material3.adaptive.navigation3)
+    implementation(libs.kotlinx.serialization.core)
 }
