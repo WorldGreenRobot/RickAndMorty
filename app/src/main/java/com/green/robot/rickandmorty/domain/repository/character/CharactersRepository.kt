@@ -5,6 +5,7 @@ import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import kotlinx.coroutines.flow.Flow
 
+
 interface CharactersRepository {
     fun getCharacters(): Flow<PagingData<Character>>
 

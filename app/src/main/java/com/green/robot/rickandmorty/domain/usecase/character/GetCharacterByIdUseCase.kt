@@ -21,10 +21,8 @@ class GetCharacterByIdUseCase @Inject constructor(
         if (characterResult.isFailure) {
             return Result.failure(characterResult.exceptionOrNull()!!)
         }
-        val character = characterResult.getOrNull()
-        if (character == null) {
-            return Result.failure(Exception("Character not found"))
-        }
+        val character =
+            characterResult.getOrNull() ?: return Result.failure(Exception("Character not found"))
         val episodeAsync: Deferred<Result<List<Episode>>>
 
         coroutineScope {

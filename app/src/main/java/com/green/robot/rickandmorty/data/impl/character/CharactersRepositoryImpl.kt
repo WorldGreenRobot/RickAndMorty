@@ -18,7 +18,6 @@ import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.repository.character.CharactersRepository
 import com.green.robot.rickandmorty.utils.android.NetworkState
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
