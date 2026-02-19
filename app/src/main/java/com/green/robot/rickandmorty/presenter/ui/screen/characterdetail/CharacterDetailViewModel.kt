@@ -2,14 +2,11 @@ package com.green.robot.rickandmorty.presenter.ui.screen.characterdetail
 
 import androidx.lifecycle.ViewModel
 import com.green.robot.rickandmorty.domain.usecase.character.GetCharacterByIdUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-class CharacterDetailViewModel @Inject constructor(
+class CharacterDetailViewModel(
     private val getCharacterByIdUseCase: GetCharacterByIdUseCase
 ) : ViewModel(), ContainerHost<CharacterDetailState, Nothing> {
 

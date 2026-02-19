@@ -17,9 +17,7 @@ import com.green.robot.rickandmorty.presenter.navigation.toEntries
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.CharacterDetailScreen
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.CharactersScreen
 import com.green.robot.rickandmorty.presenter.ui.theme.RickAndMortyTheme
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
