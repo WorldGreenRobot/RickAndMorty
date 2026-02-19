@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
@@ -48,12 +47,13 @@ import com.green.robot.rickandmorty.presenter.ui.components.SearchableTopAppBar
 import com.green.robot.rickandmorty.presenter.ui.dialogs.FilterBottomSheetDialog
 import com.green.robot.rickandmorty.presenter.ui.screen.characters.view.CharacterItem
 import kotlinx.coroutines.flow.flowOf
+import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CharactersScreen(
     navigator: Navigator,
-    viewModel: CharactersViewModel = hiltViewModel()
+    viewModel: CharactersViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
 

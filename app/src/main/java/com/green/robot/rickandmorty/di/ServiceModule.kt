@@ -3,28 +3,11 @@ package com.green.robot.rickandmorty.di
 import com.green.robot.rickandmorty.data.network.service.character.CharactersService
 import com.green.robot.rickandmorty.data.network.service.episode.EpisodeService
 import com.green.robot.rickandmorty.data.network.service.location.LocationService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import org.koin.dsl.module
 import retrofit2.Retrofit
 
-@Module
-@InstallIn(SingletonComponent::class)
-class ServiceModule {
-
-    @Provides
-    fun provideCharactersService(retrofit: Retrofit): CharactersService {
-        return retrofit.create(CharactersService::class.java)
-    }
-
-    @Provides
-    fun provideEpisodeService(retrofit: Retrofit): EpisodeService {
-        return retrofit.create(EpisodeService::class.java)
-    }
-
-    @Provides
-    fun provideLocationService(retrofit: Retrofit): LocationService {
-        return retrofit.create(LocationService::class.java)
-    }
+val serviceModule = module {
+    factory { get<Retrofit>().create(CharactersService::class.java) }
+    factory { get<Retrofit>().create(EpisodeService::class.java) }
+    factory { get<Retrofit>().create(LocationService::class.java) }
 }
