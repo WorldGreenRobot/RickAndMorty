@@ -1,22 +1,50 @@
 package com.green.robot.rickandmorty.di
 
+import android.content.Context
 import androidx.room.Room
 import com.green.robot.rickandmorty.data.database.core.AppDatabase
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-val dataBaseModule = module {
-    factory {
-        Room.databaseBuilder(
-            get(),
+
+@Module
+@InstallIn(SingletonComponent::class)
+class DataBaseModule {
+
+    @Provides
+    fun provideDataBase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
             AppDatabase::class.java,
             "rick_and_morty"
         ).build()
     }
 
-    single { get<AppDatabase>().characterDao() }
-    single { get<AppDatabase>().episodeDao() }
-    single { get<AppDatabase>().locationDao() }
-    single { get<AppDatabase>().characterDetailsDao() }
-    single { get<AppDatabase>().remoteKeysDao() }
-    single { get<AppDatabase>().filterDao() }
+    @Provides
+    @Singleton
+    fun provideCharacterDao(appDatabase: AppDatabase) = appDatabase.characterDao()
+
+    @Provides
+    @Singleton
+    fun provideEpisodeDao(appDatabase: AppDatabase) = appDatabase.episodeDao()
+
+    @Provides
+    @Singleton
+    fun provideLocationDao(appDatabase: AppDatabase) = appDatabase.locationDao()
+
+    @Provides
+    @Singleton
+    fun provideCharacterDetailsDao(appDatabase: AppDatabase) = appDatabase.characterDetailsDao()
+
+    @Provides
+    @Singleton
+    fun provideRemoteKeysDao(appDatabase: AppDatabase) = appDatabase.remoteKeysDao()
+
+    @Provides
+    @Singleton
+    fun provideFilterDao(appDatabase: AppDatabase) = appDatabase.filterDao()
 }
