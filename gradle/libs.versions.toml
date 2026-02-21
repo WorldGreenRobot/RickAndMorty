@@ -24,6 +24,7 @@ kotlinxSerializationCore = "1.10.0"
 material3AdaptiveNav3 = "1.3.0-alpha08"
 hilt = "2.59.1"
 koin-bom = "4.1.1"
+leakCanary = "2.14"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -71,6 +72,7 @@ koin-android = { module = "io.insert-koin:koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
