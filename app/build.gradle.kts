@@ -75,4 +75,5 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+    debugImplementation(libs.leakcanary)
 }
