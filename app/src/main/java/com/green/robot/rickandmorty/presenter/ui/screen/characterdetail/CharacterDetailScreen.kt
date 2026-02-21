@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetailData
@@ -42,7 +43,6 @@ import com.green.robot.rickandmorty.presenter.ui.components.EmptyList
 import com.green.robot.rickandmorty.presenter.ui.components.Screen
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.CharacterDetailView
 import com.green.robot.rickandmorty.presenter.ui.screen.characterdetail.view.EpisodesContainer
-import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -50,7 +50,7 @@ fun CharacterDetailScreen(
     id: Int,
     characterName: String,
     navigator: Navigator,
-    viewModel: CharacterDetailViewModel = koinViewModel()
+    viewModel: CharacterDetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
 

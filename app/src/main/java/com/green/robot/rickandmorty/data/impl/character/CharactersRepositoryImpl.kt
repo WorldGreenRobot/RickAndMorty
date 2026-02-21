@@ -15,17 +15,17 @@ import com.green.robot.rickandmorty.domain.entity.character.Character
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.repository.character.CharactersRepository
 import com.green.robot.rickandmorty.utils.android.NetworkState
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CharactersRepositoryImpl(
+class CharactersRepositoryImpl @Inject constructor(
     private val charactersService: CharactersService,
     private val networkState: NetworkState,
     private val appDatabase: AppDatabase,
-    private val ioDispatcher: CoroutineDispatcher
 ) : CharactersRepository {
     @OptIn(ExperimentalPagingApi::class)
     override fun getCharacters(): Flow<PagingData<Character>> {
@@ -50,12 +50,12 @@ class CharactersRepositoryImpl(
             }
         ).flow.map {
             it.mapDbToDomain()
-        }.flowOn(ioDispatcher)
+        }.flowOn(Dispatchers.IO)
 
     }
 
     override suspend fun getCharacterById(id: Int): Result<CharacterDetail?> {
-        return withContext(ioDispatcher) {
+        return withContext(Dispatchers.IO) {
             try {
                 val character = if (networkState.isAccessNetwork()) {
                     charactersService.getCharacterById(id).mapNetworkToDomain()

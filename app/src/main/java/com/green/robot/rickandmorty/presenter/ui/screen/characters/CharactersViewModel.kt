@@ -6,11 +6,14 @@ import com.green.robot.rickandmorty.domain.usecase.character.GetCharactersUseCas
 import com.green.robot.rickandmorty.domain.usecase.filter.GetFilterUseCase
 import com.green.robot.rickandmorty.domain.usecase.filter.SetFilterUseCase
 import com.green.robot.rickandmorty.presenter.mapper.filter.FilterMapper.mapToUi
+import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import javax.inject.Inject
 
-class CharactersViewModel(
+@HiltViewModel
+class CharactersViewModel @Inject constructor(
     private val getCharactersUseCase: GetCharactersUseCase,
     private val getFilterUseCase: GetFilterUseCase,
     private val setFilterUseCase: SetFilterUseCase

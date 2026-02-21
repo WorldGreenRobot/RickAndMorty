@@ -8,17 +8,17 @@ import com.green.robot.rickandmorty.data.network.service.location.LocationServic
 import com.green.robot.rickandmorty.domain.entity.location.Location
 import com.green.robot.rickandmorty.domain.repository.locaion.LocationRepository
 import com.green.robot.rickandmorty.utils.android.NetworkState
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LocationRepositoryImpl(
+class LocationRepositoryImpl @Inject constructor(
     private val locationService: LocationService,
     private val networkState: NetworkState,
-    private val locationDao: LocationDao,
-    private val ioDispatcher: CoroutineDispatcher
+    private val locationDao: LocationDao
 ) : LocationRepository {
     override suspend fun getLocationsById(id: String): Result<Location> {
-        return withContext(ioDispatcher) {
+        return withContext(Dispatchers.IO) {
             try {
                 val location = if (networkState.isAccessNetwork()) {
                     locationService.getLocationsById(id).mapNetworkToDomain()

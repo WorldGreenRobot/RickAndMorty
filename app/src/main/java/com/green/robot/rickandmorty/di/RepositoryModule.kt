@@ -8,12 +8,23 @@ import com.green.robot.rickandmorty.domain.repository.character.CharactersReposi
 import com.green.robot.rickandmorty.domain.repository.episode.EpisodesRepository
 import com.green.robot.rickandmorty.domain.repository.filter.FilterRepository
 import com.green.robot.rickandmorty.domain.repository.locaion.LocationRepository
-import org.koin.core.qualifier.named
-import org.koin.dsl.module
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-val repositoryModule = module {
-    single<CharactersRepository> { CharactersRepositoryImpl(get(), get(), get(), get(named("IO"))) }
-    single<EpisodesRepository> { EpisodeRepositoryImpl(get(), get(), get(), get(named("IO"))) }
-    single<LocationRepository> { LocationRepositoryImpl(get(), get(), get(), get(named("IO"))) }
-    single<FilterRepository> { FilterRepositoryImpl(get(), get(named("IO"))) }
+@Module
+@InstallIn(SingletonComponent::class)
+interface RepositoryModule {
+    @Binds
+    fun characterRepository(repository: CharactersRepositoryImpl): CharactersRepository
+
+    @Binds
+    fun episodeRepository(repository: EpisodeRepositoryImpl): EpisodesRepository
+
+    @Binds
+    fun locationRepository(repository: LocationRepositoryImpl): LocationRepository
+
+    @Binds
+    fun filterRepository(repository: FilterRepositoryImpl): FilterRepository
 }
