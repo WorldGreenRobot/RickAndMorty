@@ -29,7 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.green.robot.rickandmorty.R
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetail
 import com.green.robot.rickandmorty.domain.entity.character.CharacterDetailData
@@ -50,7 +51,8 @@ fun CharacterDetailScreen(
     id: Int,
     characterName: String,
     navigator: Navigator,
-    viewModel: CharacterDetailViewModel = hiltViewModel()
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModel: CharacterDetailViewModel = viewModel(factory = viewModelFactory)
 ) {
     val state by viewModel.collectAsState()
 

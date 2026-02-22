@@ -10,11 +10,8 @@ import com.green.robot.rickandmorty.domain.repository.filter.FilterRepository
 import com.green.robot.rickandmorty.domain.repository.locaion.LocationRepository
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(SingletonComponent::class)
 interface RepositoryModule {
     @Binds
     fun characterRepository(repository: CharactersRepositoryImpl): CharactersRepository

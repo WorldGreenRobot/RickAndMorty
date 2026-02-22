@@ -2,9 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
-    alias(libs.plugins.hilt)
+    alias(libs.plugins.kapt)
 }
 
 android {
@@ -63,7 +62,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.serialization)
     implementation(libs.bundles.okhttp)
-    ksp(libs.room.compiler)
+    kapt(libs.room.compiler)
     implementation(libs.serializarion.converter)
     implementation(libs.bundles.coil)
     implementation(libs.accompanist.systemuicontroller)
@@ -74,7 +73,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.material3.adaptive.navigation3)
     implementation(libs.kotlinx.serialization.core)
-    implementation(libs.bundles.hilt)
-    ksp(libs.hilt.compiler)
     debugImplementation(libs.leakcanary)
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
 }

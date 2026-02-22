@@ -5,18 +5,13 @@ import androidx.room.Room
 import com.green.robot.rickandmorty.data.database.core.AppDatabase
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
-
 
 @Module
-@InstallIn(SingletonComponent::class)
 class DataBaseModule {
 
     @Provides
-    fun provideDataBase(@ApplicationContext context: Context): AppDatabase {
+    @AppScope
+    fun provideDataBase(context: Context): AppDatabase {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
@@ -25,26 +20,26 @@ class DataBaseModule {
     }
 
     @Provides
-    @Singleton
+    @AppScope
     fun provideCharacterDao(appDatabase: AppDatabase) = appDatabase.characterDao()
 
     @Provides
-    @Singleton
+    @AppScope
     fun provideEpisodeDao(appDatabase: AppDatabase) = appDatabase.episodeDao()
 
     @Provides
-    @Singleton
+    @AppScope
     fun provideLocationDao(appDatabase: AppDatabase) = appDatabase.locationDao()
 
     @Provides
-    @Singleton
+    @AppScope
     fun provideCharacterDetailsDao(appDatabase: AppDatabase) = appDatabase.characterDetailsDao()
 
     @Provides
-    @Singleton
+    @AppScope
     fun provideRemoteKeysDao(appDatabase: AppDatabase) = appDatabase.remoteKeysDao()
 
     @Provides
-    @Singleton
+    @AppScope
     fun provideFilterDao(appDatabase: AppDatabase) = appDatabase.filterDao()
 }

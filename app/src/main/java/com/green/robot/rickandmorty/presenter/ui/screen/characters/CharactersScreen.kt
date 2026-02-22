@@ -29,7 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
@@ -53,7 +54,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun CharactersScreen(
     navigator: Navigator,
-    viewModel: CharactersViewModel = hiltViewModel()
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModel: CharactersViewModel = viewModel(factory = viewModelFactory)
 ) {
     val state by viewModel.collectAsState()
 
