@@ -8,7 +8,6 @@ import dagger.Provides
 @Module
 class UtilsModule {
     @Provides
-    @AppScope
     fun provideNetworkState(context: Context) =
         NetworkState.getInstance(context)
 }

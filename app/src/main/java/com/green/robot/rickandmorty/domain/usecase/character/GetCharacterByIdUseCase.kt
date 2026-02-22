@@ -45,10 +45,8 @@ class GetCharacterByIdUseCase @Inject constructor(
             return Result.failure(episodes.exceptionOrNull()!!)
         }
 
-        val episodesResult = episodes.getOrNull()
-        if (episodesResult == null) {
-            return Result.failure(Exception("Episodes not found"))
-        }
+        val episodesResult =
+            episodes.getOrNull() ?: return Result.failure(Exception("Episodes not found"))
 
         return Result.success(
             CharacterDetailData(

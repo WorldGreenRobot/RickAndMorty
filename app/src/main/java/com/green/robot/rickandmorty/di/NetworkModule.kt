@@ -15,13 +15,11 @@ import retrofit2.Retrofit
 class NetworkModule {
 
     @Provides
-    @AppScope
     fun createOkHttp(): OkHttpClient {
         return OkHttpClient.Builder().retryOnConnectionFailure(true).build()
     }
 
     @Provides
-    @AppScope
     fun createRetrofit(okHttpClient: OkHttpClient): Retrofit {
         val json = Json { ignoreUnknownKeys = true }
         return Retrofit.Builder()
@@ -32,19 +30,16 @@ class NetworkModule {
     }
 
     @Provides
-    @AppScope
     fun provideCharactersService(retrofit: Retrofit): CharactersService {
         return retrofit.create(CharactersService::class.java)
     }
 
     @Provides
-    @AppScope
     fun provideEpisodeService(retrofit: Retrofit): EpisodeService {
         return retrofit.create(EpisodeService::class.java)
     }
 
     @Provides
-    @AppScope
     fun provideLocationService(retrofit: Retrofit): LocationService {
         return retrofit.create(LocationService::class.java)
     }
