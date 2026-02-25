@@ -2,24 +2,29 @@ package com.green.robot.rickandmorty.presenter.ui.screen.characterdetail
 
 import androidx.lifecycle.ViewModel
 import com.green.robot.rickandmorty.domain.usecase.character.GetCharacterByIdUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-class CharacterDetailViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = CharacterDetailViewModel.Factory::class)
+class CharacterDetailViewModel @AssistedInject constructor(
+    @Assisted("id") private val id: Int,
+    @Assisted("name") private val characterName: String,
     private val getCharacterByIdUseCase: GetCharacterByIdUseCase
 ) : ViewModel(), ContainerHost<CharacterDetailState, Nothing> {
 
     override val container: Container<CharacterDetailState, Nothing> =
-        container(CharacterDetailState())
+        container(CharacterDetailState(name = characterName))
 
-    private var id: Int = 0
+    init {
+        loadData()
+    }
 
-    fun loadData(id: Int) = intent {
-        this@CharacterDetailViewModel.id = id
+    fun loadData() = intent {
         reduce {
             state.copy(
                 showLoading = true,
@@ -53,6 +58,14 @@ class CharacterDetailViewModel @Inject constructor(
                 error = null
             )
         }
-        loadData(id)
+        loadData()
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted("id") id: Int,
+            @Assisted("name") characterName: String
+        ): CharacterDetailViewModel
     }
 }

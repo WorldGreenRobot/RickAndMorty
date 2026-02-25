@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,17 +49,16 @@ fun CharacterDetailScreen(
     id: Int,
     characterName: String,
     navigator: Navigator,
-    viewModel: CharacterDetailViewModel = hiltViewModel()
+    viewModel: CharacterDetailViewModel = hiltViewModel<CharacterDetailViewModel, CharacterDetailViewModel.Factory>(
+        key = id.toString()
+    ) { factory ->
+        factory.create(id, characterName)
+    }
 ) {
     val state by viewModel.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadData(id)
-    }
-
     CharacterContent(
         state = state,
-        name = characterName,
         onAction = {
             actionHandler(it, navigator, viewModel)
         }
@@ -71,7 +69,6 @@ fun CharacterDetailScreen(
 @Composable
 private fun CharacterContent(
     state: CharacterDetailState,
-    name: String,
     onAction: (CharacterDetailAction) -> Unit
 ) {
     Screen(
@@ -89,7 +86,7 @@ private fun CharacterContent(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = name,
+                            text = state.name,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
 
@@ -251,9 +248,9 @@ private fun CharacterDetailScreenEmptyPreview() {
         CharacterContent(
             state = CharacterDetailState(
                 showLoading = false,
+                name = "",
                 data = null
             ),
-            name = "Rick Sanchez",
             onAction = {}
         )
     }
@@ -266,6 +263,7 @@ private fun CharacterDetailScreenPreview() {
         CharacterContent(
             state = CharacterDetailState(
                 showLoading = false,
+                name = "Rick Sanchez",
                 data = CharacterDetailData(
                     characterDetail = CharacterDetail(
                         id = 1,
@@ -317,7 +315,6 @@ private fun CharacterDetailScreenPreview() {
                     )
                 )
             ),
-            name = "Rick Sanchez",
             onAction = {}
         )
     }
